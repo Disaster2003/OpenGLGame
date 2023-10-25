@@ -129,6 +129,9 @@
   <ItemGroup>
     <Text Include="..\授業進行度.txt" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="..\1stREADME.md" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

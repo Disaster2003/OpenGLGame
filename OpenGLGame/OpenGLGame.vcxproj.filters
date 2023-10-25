@@ -17,4 +17,7 @@
   <ItemGroup>
     <Text Include="..\授業進行度.txt" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="..\1stREADME.md" />
+  </ItemGroup>
 </Project>
