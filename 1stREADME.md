@@ -145,3 +145,42 @@ VisualStudioの起動
 ```
 
 ## 5.OpenGL関数の試用
+
+[GLADのダウンロードページ](https://glad.dav1d.de/)
+
+ダウンロードページの起動
+
+->Specificationを`OpenGL`に
+
+->APIのglを`Version4.5`に
+
+->Profileを`Compatibility`に
+
+->Optionsの`Generate a loader`をチェック
+
+->`GENERATE`をクリック
+
+->`glad.zip`をダウンロード
+
+->`プロジェクト名/Src/glad`に`glad.zip`を展開
+
+->(VisualStudio)ソースファイルを選択
+
+->右クリック,追加,`新しいフィルター`を選択
+
+->名前を`glad`に
+
+->プロジェクトの選択
+
+->alt + enter
+
+->構成プロパティ\C/C++\全般の
+
+　追加のインクルードディレクトリのvの`編集`をクリック
+
+->テキストボックスに`$(ProjectDir)Src\glad\include`を入力
+
+->`OK`をクリック
+
+```diff
+```
