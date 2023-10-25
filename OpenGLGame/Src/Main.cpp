@@ -1,6 +1,7 @@
 /**
 * @file Main.cpp
 */
+#include "glad/glad.h"  // GLADライブラリの関数が定義されているヘッダファイル
 #include <GLFW/glfw3.h> // GLFWライブラリの関数が定義されているヘッダファイル
 #include <Windows.h>    // ウィンドウズ用の関数が定義されているヘッダファイル
 #include <string>       // 文字列型や文字列操作関数などが定義されているヘッダファイル
@@ -28,7 +29,7 @@ int WINAPI WinMain
 #pragma region 描画ウィンドウの作成
     GLFWwindow* window = nullptr;           // ウィンドウオブジェクト
     const std::string title = "OpenGLGame"; // ウィンドウタイトル
-    window = 
+    window =
         //グラフィックス描画用ウィンドウの作成
         glfwCreateWindow
         (
@@ -52,6 +53,15 @@ int WINAPI WinMain
     // OpenGLコンテキストの作成
     // 引数 : GLFWウィンドウオブジェクトのアドレス
     glfwMakeContextCurrent(window);
+
+    // gladLoadGLLoader : 必要な関数のアドレスを全て取得
+    // glfwGetProcAddress : OpenGL関数名に対応する関数のアドレスを返す
+    if (!gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress)))
+    {
+        // GLFWライブラリの終了
+        glfwTerminate();
+        return 1; // アドレス取得失敗
+    }
 #pragma endregion
 
 #pragma region メインループの定義
@@ -59,6 +69,20 @@ int WINAPI WinMain
     // メインループ処理を続ける
     while (!glfwWindowShouldClose(window))
     {
+        // バックバッファを消去するときに使用する色を指定
+        glClearColor
+        (
+            0.3f,   // R(赤)
+            0.6f,   // G(緑)
+            0.9f,   // B(青)
+            1.0f    // A(透明度)
+        );
+        // バックバッファをクリア
+        // GL_COLOR_BUFFER_BIT : カラーバッファ(色)
+        // GL_DEPTH_BUFFER_BIT : 深度バッファ(奥行き)
+        // GL_STENCIL_BUFFER_BIT : ステンシルバッファ(切り抜き)
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
         // バックバッファの描画終了時,
         // フロントバッファと役割の交換
         glfwSwapBuffers(window);
