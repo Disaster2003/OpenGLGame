@@ -193,50 +193,8 @@ VisualStudioの起動
  #include <GLFW/glfw3.h> // GLFWライブラリの関数が定義されているヘッダファイル
  #include <Windows.h>    // ウィンドウズ用の関数が定義されているヘッダファイル
  #include <string>       // 文字列型や文字列操作関数などが定義されているヘッダファイル
- 
- /// <summary>
- /// エントリーポイント
- /// </summary>
- int WINAPI WinMain
- (
-     _In_ HINSTANCE hInstnce,
-     _In_opt_ HINSTANCE hPrevInstance,
-     _In_ LPSTR lpCmdLine,
-     _In_ int nShowCmd
- )
- {
- #pragma region GLFWライブラリの初期化
-     // 初期化に成功しなかった(!GLFW_TRUE)時,
-     // 1を返して終了
-     if (glfwInit() != GLFW_TRUE)
-     {
-         return 1; // 初期化失敗
-     }
- #pragma endregion
- 
- #pragma region 描画ウィンドウの作成
-     GLFWwindow* window = nullptr;           // ウィンドウオブジェクト
-     const std::string title = "OpenGLGame"; // ウィンドウタイトル
-     window =
-         //グラフィックス描画用ウィンドウの作成
-         glfwCreateWindow
-         (
-             1280,           // ウィンドウの幅
-             720,            // ウィンドウの高さ
-             title.c_str(),  // タイトルバーに表示する文字列
-             nullptr,        // 表示するモニタの選択
-             nullptr         // リソースを共有するウィンドウ
-         );
-     // ウィンドウの作成に成功しなかった(nullptr)時,
-     // 1を返して終了
-     if (!window)
-     {
-         // GLFWライブラリの終了
-         glfwTerminate();
-         return 1;   // ウィンドウ作成失敗
-     }
- #pragma endregion
- 
+```
+```diff
  #pragma region OpenGL関数の導入
      // OpenGLコンテキストの作成
      // 引数 : GLFWウィンドウオブジェクトのアドレス
@@ -276,18 +234,6 @@ VisualStudioの起動
          // フロントバッファと役割の交換
          // 引数 : GLFWwindowへのポインタ
          glfwSwapBuffers(window);
-         // 「OSからの要求」の処理
-         // (キーボードやマウスなどの状態を取得するなど)
-         glfwPollEvents();
-     }
- #pragma endregion
- 
- #pragma region GLFWライブラリの終了
-     glfwTerminate();
- #pragma endregion
- 
-     return 0;
- }
 ```
 
 ## 課題01
@@ -315,11 +261,6 @@ OpenGLで図形を描画するには...
 >*頂点データ形式: 頂点データの解釈方法。
 
 ```diff
- #pragma region OpenGL関数の導入
-     // OpenGLコンテキストの作成
-     // 引数 : GLFWウィンドウオブジェクトのアドレス
-     glfwMakeContextCurrent(window);
- 
      // gladLoadGLLoader : 必要な関数のアドレスを全て取得
      // glfwGetProcAddress : OpenGL関数名に対応する関数のアドレスを返す
      if (!gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress)))
@@ -398,20 +339,6 @@ OpenGLで図形を描画するには...
 `　必要な部分だけを有効に`
 
 ```diff
- #pragma region インデックスデータをGPUメモリにコピー
-     // インデックスデータ(図形を構成する頂点番号)
-     const GLushort indexData[] =
-     {
-         0, 1, 2,
-         3, 4, 5, 5, 6, 3,
-     };
-     GLuint ibo = 0; // インデックスバッファの管理番号
-     // バッファオブジェクト(GPUメモリを管理するためのオブジェクト)の作成
-     glCreateBuffers
-     (
-         1,      // 作成するオブジェクト数
-         &ibo    // インデックスバッファの管理番号
-     );
      // GPUメモリを確保のち,データをコピー
      // データのアドレスがnullptrなら,
      // GPUメモリの確保のみ
@@ -585,5 +512,83 @@ OpenGLのバージョン4.3から、
 エラーを通知する機能が存在
 
 ```diff
-
+ #include <string>       // 文字列型や文字列操作関数などが定義されているヘッダファイル
+ 
++/// <summary>
++/// OpenGLからのメッセージを処理するコールバック関数
++/// </summary>
++/// <param name="source">メッセージの発信者(OpenGL、Windows、シェーダなど)</param>
++/// <param name="type">メッセージの種類(エラー、警告など)</param>
++/// <param name="id">メッセージを一位に識別する値</param>
++/// <param name="severity">メッセージの重要度(高、中、低、最低)</param>
++/// <param name="length">メッセージの文字数. 負数ならメッセージは0終端されている</param>
++/// <param name="message">メッセージ本体</param>
++/// <param name="userParam">コールバック設定時に指定したポインタ</param>
++void APIENTRY DebugCallback(GLenum source, GLenum type, GLuint id,
++  GLenum severity, GLsizei length, const GLchar* message, const void* userParam)
++{
++  std::string s;
++  // メッセージの文字数が
++  // 負数の時,0終端("\0")
++  if (length < 0)
++  {
++    s = message;
++  }
++  // メッセージの読み込み
++  else
++  {
++    s.assign(message, message + length);
++  }
++  s += '\n'; // メッセージには改行がないので追加する
++  // 出力ウィンドウへの表示
++  // 引数 : 出力する文字列
++  OutputDebugStringA(s.c_str());
++}
++
+ /// <summary>
+ /// エントリーポイント
+ /// </summary>
+ int WINAPI WinMain
+ (
+```
+```diff
+ #pragma region 描画ウィンドウの作成
+     GLFWwindow* window = nullptr;           // ウィンドウオブジェクト
+     const std::string title = "OpenGLGame"; // ウィンドウタイトル
++    // GLFWライブラリを使ってコンテキストの種類の設定
++    // GLFW_TRUE : デバッグコンテキストの作成
++    // GLFW_FALSE : 通常のコンテキストの作成
++    glfwWindowHint
++    (
++        GLFW_OPENGL_DEBUG_CONTEXT,  // ヒントの種類
++        GLFW_TRUE                   // ヒントに設定する値
++    );
+     window =
+         //グラフィックス描画用ウィンドウの作成
+         glfwCreateWindow
+         (
+```
+```diff
+     // gladLoadGLLoader : 必要な関数のアドレスを全て取得
+     // glfwGetProcAddress : OpenGL関数名に対応する関数のアドレスを返す
+     if (!gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress)))
+     {
+         // GLFWライブラリの終了
+         glfwTerminate();
+         return 1; // アドレス取得失敗
+     }
+ #pragma endregion
++
++#pragma region メッセージコールバックの設定
++    glDebugMessageCallback
++    (
++        DebugCallback,  // 呼び出す関数のアドレス
++        nullptr         // 関数のuserParam引数に渡される値
++    );
++#pragma endregion
++
+ #pragma region 頂点データをGPUメモリにコピー
+     // 頂点データ(x,y,z座標が-1~+1の座標系における座標)
+     const float vertexData[][3] =
+     {
 ```
