@@ -139,6 +139,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\1stREADME.md" />
+    <None Include="..\2ndREADME.md" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

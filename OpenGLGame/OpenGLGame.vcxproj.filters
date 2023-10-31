@@ -23,6 +23,7 @@
   <ItemGroup>
     <None Include="..\1stREADME.md" />
     <None Include="packages.config" />
+    <None Include="..\2ndREADME.md" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\Main.cpp">
