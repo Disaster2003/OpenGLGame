@@ -7,6 +7,37 @@
 #include <string>       // 文字列型や文字列操作関数などが定義されているヘッダファイル
 
 /// <summary>
+/// OpenGLからのメッセージを処理するコールバック関数
+/// </summary>
+/// <param name="source">メッセージの発信者(OpenGL、Windows、シェーダなど)</param>
+/// <param name="type">メッセージの種類(エラー、警告など)</param>
+/// <param name="id">メッセージを一位に識別する値</param>
+/// <param name="severity">メッセージの重要度(高、中、低、最低)</param>
+/// <param name="length">メッセージの文字数. 負数ならメッセージは0終端されている</param>
+/// <param name="message">メッセージ本体</param>
+/// <param name="userParam">コールバック設定時に指定したポインタ</param>
+void APIENTRY DebugCallback(GLenum source, GLenum type, GLuint id,
+  GLenum severity, GLsizei length, const GLchar* message, const void* userParam)
+{
+  std::string s;
+  // メッセージの文字数が
+  // 負数の時,0終端("\0")
+  if (length < 0)
+  {
+    s = message;
+  }
+  // メッセージの読み込み
+  else
+  {
+    s.assign(message, message + length);
+  }
+  s += '\n'; // メッセージには改行がないので追加する
+  // 出力ウィンドウへの表示
+  // 引数 : 出力する文字列
+  OutputDebugStringA(s.c_str());
+}
+
+/// <summary>
 /// エントリーポイント
 /// </summary>
 int WINAPI WinMain
@@ -29,6 +60,14 @@ int WINAPI WinMain
 #pragma region 描画ウィンドウの作成
     GLFWwindow* window = nullptr;           // ウィンドウオブジェクト
     const std::string title = "OpenGLGame"; // ウィンドウタイトル
+    // GLFWライブラリを使ってコンテキストの種類の設定
+    // GLFW_TRUE : デバッグコンテキストの作成
+    // GLFW_FALSE : 通常のコンテキストの作成
+    glfwWindowHint
+    (
+        GLFW_OPENGL_DEBUG_CONTEXT,  // ヒントの種類
+        GLFW_TRUE                   // ヒントに設定する値
+    );
     window =
         //グラフィックス描画用ウィンドウの作成
         glfwCreateWindow
@@ -62,6 +101,14 @@ int WINAPI WinMain
         glfwTerminate();
         return 1; // アドレス取得失敗
     }
+#pragma endregion
+
+#pragma region メッセージコールバックの設定
+    glDebugMessageCallback
+    (
+        DebugCallback,  // 呼び出す関数のアドレス
+        nullptr         // 関数のuserParam引数に渡される値
+    );
 #pragma endregion
 
 #pragma region 頂点データをGPUメモリにコピー
