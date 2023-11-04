@@ -21,9 +21,10 @@
     <Text Include="..\授業進行度.txt" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\1stREADME.md" />
     <None Include="packages.config" />
     <None Include="..\2ndREADME.md" />
+    <None Include="Res\standard.vert" />
+    <None Include="Res\standard.frag" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\Main.cpp">

@@ -138,9 +138,10 @@
     <Text Include="..\授業進行度.txt" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\1stREADME.md" />
     <None Include="..\2ndREADME.md" />
     <None Include="packages.config" />
+    <None Include="Res\standard.frag" />
+    <None Include="Res\standard.vert" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\glad\src\glad.c" />

@@ -100,3 +100,45 @@ FragmentShaderから送られてきた
 プリミティブを描画する
 
 ## 2.シェーダ
+OpenGLのシェーダは
+
+GLSL(OpenGL Shading Language)という
+
+言語で記述する
+
+GLSLはC言語をベースにして,
+
+シェーダにとって必要な機能や型を追加し,
+
+不要な機能を削除した言語である
+
+
+ctrl+shift+A
+
+->`プロジェクト名\Res\standard.vert`
+
+->`追加`をクリック
+
+->shift+alt+A
+
+->`Res\standard.vert`をクリック
+
+->`追加`をクリック
+
+```diff
+```
+
+ctrl+shift+A
+
+->`プロジェクト名\Res\standard.frag`
+
+->`追加`をクリック
+
+->shift+alt+A
+
+->`Res\standard.frag`をクリック
+
+->`追加`をクリック
+
+```diff
+```
