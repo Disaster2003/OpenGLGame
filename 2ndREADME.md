@@ -112,7 +112,7 @@ GLSLはC言語をベースにして,
 
 不要な機能を削除した言語である
 
-
+### 2-1.シェーダの記述
 ctrl+shift+A
 
 ->`プロジェクト名\Res\standard.vert`
@@ -126,6 +126,22 @@ ctrl+shift+A
 ->`追加`をクリック
 
 ```diff
++/**
++* @file standard.vert
++*/
++#version 450 // GLSLver * 100
++
++// シェーダへの入力
++// layout修飾子 : 型やステージに固有の属性の設定
++// location : 他のプログラムが変数にアクセスするための番号の付与
++// in修飾子 : バーテックスプラーステージから送られた値の設定
++//            (glVertexArrayAttribPointer関数によって指定した頂点データ)
++layout(location=0) in vec3 inPosition; // 頂点座標
++
++void main()
++{
++  gl_Position = vec4(inPosition, 1);
++}
 ```
 
 ctrl+shift+A
@@ -141,4 +157,30 @@ ctrl+shift+A
 ->`追加`をクリック
 
 ```diff
++/**
++* @file standard.frag
++*/
++#version 450 // GLSLver * 100
++
++// 出力する色データ
++// out修飾子 : シェーダからの出力の格納
++out vec4 outColor;
++
++void main()
++{
++  outColor = vec4(0.2, 0.3, 1.0, 1.0);
++}
 ```
+
+### 2-2.シェーダのコンパイルとリンク
+作成したシェーダファイルを
+
+グラフィックス・パイプラインで
+
+使えるようにするには...
+
+>1. 頂点シェーダファイルを読み込む
+>2. 頂点シェーダをコンパイルする
+>3. フラグメントシェーダファイルを読み込む
+>4. フラグメントシェーダをコンパイルする
+>5. 頂点シェーダとフラグメントシェーダをリンクする
