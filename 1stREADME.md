@@ -352,33 +352,33 @@ OpenGLで図形を描画するには...
  #pragma endregion
 +
 +#pragma region 頂点データ形式の設定
-+    // 頂点属性配列の設定
-+    GLuint vao = 0; // 頂点属性の管理番号
-+    // VAOの作成
++    GLuint vao = 0; // 頂点属性配列の管理番号
++    // 頂点属性オブジェクトの作成
 +    glCreateVertexArrays
 +    (
 +        1,    // 作成するオブジェクト数
-+        &vao  // 頂点属性の管理番号を格納する配列
++        &vao  // 頂点属性配列の管理番号を格納する配列
 +    );
 +    // VAOをOpenGLコンテキストにバインド(割り当てる)
-+    // 引数 : 割り当てるVAOの管理番号
++    // 引数 : 割り当てる頂点属性配列の管理番号
 +    glBindVertexArray(vao);
 +
-+    // IBOをOpenGLコンテキストとVAOの両方にバインド(VAOがOpenGLコンテキストにバインドされているため)
++    // IBOをOpenGLコンテキストとVAOの両方にバインド
++    // (VAOがOpenGLコンテキストにバインドされているため)
 +    // GL_ELEMENT_ARRAY_BUFFER
 +    // ->OpenGLコンテキストにVAOが割り当てられている場合、
 +    //   バッファオブジェクトをVAOにも割り当てる
 +    glBindBuffer
 +    (
 +        GL_ELEMENT_ARRAY_BUFFER,  // 割り当てるオブジェクトの種類
-+        ibo                       // 割り当てるバッファオブジェクトの管理番号
++        ibo                       // 割り当てるインデックスバッファの管理番号
 +    );
 +
 +    // VBOをOpenGLコンテキストにバインド(IBOと異なり、VAOにはバインドされない)
 +    glBindBuffer
 +    (
 +        GL_ARRAY_BUFFER,  // 割り当てるオブジェクトの種類
-+        vbo               // 割り当てるバッファオブジェクトの管理番号
++        vbo               // 割り当てる頂点バッファ管理番号
 +    );
 +
 +    // 0番目の頂点属性を有効化
@@ -413,7 +413,7 @@ OpenGLで図形を描画するには...
          glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
  
 +        // VAOをOpenGLコンテキストに割り当てる    
-+        // 引数 : 割り当てるVAOの管理番号
++        // 引数 : 割り当てる頂点属性配列の管理番号
 +        glBindVertexArray(vao);
 +        // 図形を描画
 +        glDrawElementsInstanced
@@ -425,7 +425,7 @@ OpenGLで図形を描画するには...
 +            1                   // 描画する図形の数
 +        );
 +        // VAOの割り当てを解除
-+        // 引数 : 割り当てるVAOの管理番号
++        // 引数 : 割り当てる頂点属性配列の管理番号
 +        glBindVertexArray(0);
  
          // バックバッファの描画終了時,
@@ -524,8 +524,16 @@ OpenGLのバージョン4.3から、
 +/// <param name="length">メッセージの文字数. 負数ならメッセージは0終端されている</param>
 +/// <param name="message">メッセージ本体</param>
 +/// <param name="userParam">コールバック設定時に指定したポインタ</param>
-+void APIENTRY DebugCallback(GLenum source, GLenum type, GLuint id,
-+  GLenum severity, GLsizei length, const GLchar* message, const void* userParam)
++void APIENTRY DebugCallback
++(
++    GLenum source,
++    GLenum type,
++    GLuint id,
++    GLenum severity,
++    GLsizei length,
++    const GLchar* message,
++    const void* userParam
++)
 +{
 +  std::string s;
 +  // メッセージの文字数が
@@ -541,7 +549,7 @@ OpenGLのバージョン4.3から、
 +  }
 +  s += '\n'; // メッセージには改行がないので追加する
 +  // 出力ウィンドウへの表示
-+  // 引数 : 出力する文字列
++  // 引数 : 出力する文字列(エラーメッセージ)
 +  OutputDebugStringA(s.c_str());
 +}
 +
