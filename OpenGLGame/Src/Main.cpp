@@ -355,6 +355,10 @@ int WINAPI WinMain
         // 描画に使うシェーダを指定
         glUseProgram(prog3D);
 
+        // ユニフォーム変数にデータをコピー
+        const float timer = static_cast<float>(glfwGetTime());
+        glProgramUniform1f(prog3D, 0, timer * 0.5f);
+
         // 図形を描画
         glDrawElementsInstanced
         (

@@ -3,11 +3,14 @@
 */
 #version 450 // GLSLver * 100
 
+// シェーダへの入力
+layout(location=0) in vec4 inColor; // 頂点色
+
 // 出力する色データ
 // out修飾子 : シェーダからの出力の格納
 out vec4 outColor;
 
 void main()
 {
-  outColor = vec4(1.0, 1.0, 0.2, 1.0);
+  outColor = inColor;
 }
