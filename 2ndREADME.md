@@ -331,16 +331,156 @@ ctrl+shift+A
 
 ### 2-3.シェーダの使用
 ```diff
-        // VAOをOpenGLコンテキストに割り当てる    
-        // 引数 : 割り当てる頂点属性配列の管理番号
-        glBindVertexArray(vao);
+ // VAOをOpenGLコンテキストに割り当てる    
+ // 引数 : 割り当てる頂点属性配列の管理番号
+ glBindVertexArray(vao);
 
-+       // 描画に使うシェーダを指定
-+       glUseProgram(prog3D);
++// 描画に使うシェーダを指定
++glUseProgram(prog3D);
 
-        // 図形を描画
-        glDrawElementsInstanced
-        (
+ // 図形を描画
+ glDrawElementsInstanced
+ (
 ```
 
 ### 2-4.シェーダ-シェーダ,C++-シェーダのデータ移動
+`アウト変数とイン変数の組み合わせについて,
+ロケーション番号と型が一致しない場合,
+シェーダのリンクに失敗する`
+
+```diff
+ /**
+ * @file standard.vert
+ */
+ #version 450 // GLSL ver. * 100
+ 
+ // シェーダへの入力
+ // layout修飾子 : 型やステージに固有の属性の設定
+ // location : 他のプログラムが変数にアクセスするための番号の付与
+ // in修飾子 : バーテックスプラーステージから送られた値の設定
+ //            (glVertexArrayAttribPointer関数によって指定した頂点データ)
+ layout(location=0) in vec3 inPosition; // 頂点座標
+ 
++// シェーダからの出力
++layout(location=0) out vec4 outColor; // 頂点色
++
++// プログラムからの入力
++// uniform変数
++// ->シェーダプログラムに
++// C++プログラムから値を渡すための変数
++layout(location=0) uniform float timer;
+ 
+ void main()
+ {
++  const vec4 colors[] = {
++    { 1, 0, 0, 1 }, // 赤
++    { 0, 1, 0, 1 }, // 緑
++    { 0, 0, 1, 1 }, // 青
++  };
++  int i = gl_VertexID + int(timer);
++  outColor = colors[i % 4];
+ 
+   gl_Position = vec4(inPosition, 1);
+ }
+```
+
+```diff
+ /**
+ * @file standard.frag
+ */
+ #version 450 // GLSL ver. * 100
+ 
++// シェーダへの入力
++layout(location=0) in vec4 inColor; // 頂点色
+ 
+ // 出力する色データ
+ // out修飾子 : シェーダからの出力の格納
+ out vec4 outColor;
+ 
+ void main()
+ {
+-  outColor = vec4(1.0, 1.0, 0.2, 1.0);
++  outColor = inColor;
+ }
+```
+
+```diff
+/**
+* @file Main.cpp
+*/
+
+ // 描画に使うシェーダを指定
+ glUseProgram(prog3D);
+ 
++// ユニフォーム変数にデータをコピー
++// アプリ起動時からの経過時間の取得
++const float timer = static_cast<float>(glfwGetTime());
++// 変数ユニフォームにデータワット
++glProgramUniform1f
++(
++    prog3D,         // プログラムオブジェクトの管理番号
++    0,              // 送り先ロケーション番号
++    timer * 0.5f    // 送るデータ
++);
+ 
+ // 図形を描画
+ glDrawElementsInstanced
+ (
+```
+
+## 課題01
+内容
+
+colors配列に白色の要素を追加して,
+
+四角形が4色で塗られるようにしましょう。
+
+```C++
+/**
+* @file standard.vert
+*/
+
+void main()
+{
+  const vec4 colors[] = {
+    { 1, 0, 0, 1 }, // 赤
+    { 0, 1, 0, 1 }, // 緑
+    { 0, 0, 1, 1 }, // 青
+    { 1, 1, 1, 1 }, // 白
+  };
+  int i = gl_VertexID + int(timer);
+  outColor = colors[i % 4];
+
+  gl_Position = vec4(inPosition, 1);
+```
+
+## 課題02
+内容
+
+頂上の色が2.0秒間で切り替わるように,
+
+C++プログラムまたはシェーダを変更しましょう。
+
+```C++
+/**
+* @file Main.cpp
+*/
+
+// 描画に使うシェーダを指定
+glUseProgram(prog3D);
+
+// ユニフォーム変数にデータをコピー
+// アプリ起動時からの経過時間の取得
+const float timer = static_cast<float>(glfwGetTime());
+// 変数ユニフォームにデータワット
+glProgramUniform1f
+(
+    prog3D,         // プログラムオブジェクトの管理番号
+    0,              // 送り先ロケーション番号
+    timer * 0.5f    // 送るデータ
+);
+
+// 図形を描画
+glDrawElementsInstanced
+(
+```

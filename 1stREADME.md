@@ -406,32 +406,32 @@ OpenGLで図形を描画するには...
      {
 ```
 ```diff
-         // バックバッファをクリア
-         // GL_COLOR_BUFFER_BIT : カラーバッファ(色)
-         // GL_DEPTH_BUFFER_BIT : 深度バッファ(奥行き)
-         // GL_STENCIL_BUFFER_BIT : ステンシルバッファ(切り抜き)
-         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+ // バックバッファをクリア
+ // GL_COLOR_BUFFER_BIT : カラーバッファ(色)
+ // GL_DEPTH_BUFFER_BIT : 深度バッファ(奥行き)
+ // GL_STENCIL_BUFFER_BIT : ステンシルバッファ(切り抜き)
+ glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
  
-+        // VAOをOpenGLコンテキストに割り当てる    
-+        // 引数 : 割り当てる頂点属性配列の管理番号
-+        glBindVertexArray(vao);
-+        // 図形を描画
-+        glDrawElementsInstanced
-+        (
-+            GL_TRIANGLES,       // 基本図形の種類
-+            9,                  // インデックスデータ数
-+            GL_UNSIGNED_SHORT,  // インデックスデータの型
-+            0,                  // インデックスデータの開始位置
-+            1                   // 描画する図形の数
-+        );
-+        // VAOの割り当てを解除
-+        // 引数 : 割り当てる頂点属性配列の管理番号
-+        glBindVertexArray(0);
++// VAOをOpenGLコンテキストに割り当てる    
++// 引数 : 割り当てる頂点属性配列の管理番号
++glBindVertexArray(vao);
++// 図形を描画
++glDrawElementsInstanced
++(
++    GL_TRIANGLES,       // 基本図形の種類
++    9,                  // インデックスデータ数
++    GL_UNSIGNED_SHORT,  // インデックスデータの型
++    0,                  // インデックスデータの開始位置
++    1                   // 描画する図形の数
++);
++// VAOの割り当てを解除
++// 引数 : 割り当てる頂点属性配列の管理番号
++glBindVertexArray(0);
  
-         // バックバッファの描画終了時,
-         // フロントバッファと役割の交換
-         // 引数 : GLFWwindowへのポインタ
-         glfwSwapBuffers(window);
+ // バックバッファの描画終了時,
+ // フロントバッファと役割の交換
+ // 引数 : GLFWwindowへのポインタ
+ glfwSwapBuffers(window);
 ```
 
 ## 課題02
@@ -445,33 +445,33 @@ OpenGLで図形を描画するには...
 表示しなさい。
 
 ```C++
-    // 頂点データ(x,y,z座標が-1~+1の座標系における座標)
-    const float vertexData[][3] =
-    {
-        {-0.2f,-0.2f, 0}, { 0.2f,-0.2f, 0}, { 0.0f, 0.2f, 0},
-        {-0.8f,-0.2f, 0}, {-0.4f,-0.2f, 0}, {-0.4f, 0.2f, 0}, {-0.8f, 0.2f, 0},
-        {0.8f,-0.2f, 0}, {0.4f,-0.2f, 0}, {0.4f, 0.2f, 0}, {0.8f, 0.2f, 0},
-    };
+// 頂点データ(x,y,z座標が-1~+1の座標系における座標)
+const float vertexData[][3] =
+{
+    {-0.2f,-0.2f, 0}, { 0.2f,-0.2f, 0}, { 0.0f, 0.2f, 0},
+    {-0.8f,-0.2f, 0}, {-0.4f,-0.2f, 0}, {-0.4f, 0.2f, 0}, {-0.8f, 0.2f, 0},
+    {0.8f,-0.2f, 0}, {0.4f,-0.2f, 0}, {0.4f, 0.2f, 0}, {0.8f, 0.2f, 0},
+};
 ```
 ```C++
-    // インデックスデータ(図形を構成する頂点番号)
-    const GLushort indexData[] =
-    {
-        0, 1, 2,
-        3, 4, 5, 5, 6, 3,
-        7, 8, 9, 9, 10, 7,
-    };
+// インデックスデータ(図形を構成する頂点番号)
+const GLushort indexData[] =
+{
+    0, 1, 2,
+    3, 4, 5, 5, 6, 3,
+    7, 8, 9, 9, 10, 7,
+};
 ```
 ```C++
-        // 図形を描画
-        glDrawElementsInstanced
-        (
-            GL_TRIANGLES,       // 基本図形の種類
-            15,                 // インデックスデータ数
-            GL_UNSIGNED_SHORT,  // インデックスデータの型
-            0,                  // インデックスデータの開始位置
-            1                   // 描画する図形の数
-        );
+// 図形を描画
+glDrawElementsInstanced
+(
+    GL_TRIANGLES,       // 基本図形の種類
+    15,                 // インデックスデータ数
+    GL_UNSIGNED_SHORT,  // インデックスデータの型
+    0,                  // インデックスデータの開始位置
+    1                   // 描画する図形の数
+);
 ```
 を変える
 
@@ -492,15 +492,15 @@ GL_POINTSに変更してプログラムを実行し、
 確認したら、GL_TRIANGLESに戻しなさい。
 
 ```C++
-        // 図形を描画
-        glDrawElementsInstanced
-        (
-            GL_TRIANGLES,       // 基本図形の種類
-            15,                 // インデックスデータ数
-            GL_UNSIGNED_SHORT,  // インデックスデータの型
-            0,                  // インデックスデータの開始位置
-            1                   // 描画する図形の数
-        );
+// 図形を描画
+glDrawElementsInstanced
+(
+    GL_TRIANGLES,       // 基本図形の種類
+    15,                 // インデックスデータ数
+    GL_UNSIGNED_SHORT,  // インデックスデータの型
+    0,                  // インデックスデータの開始位置
+    1                   // 描画する図形の数
+);
 ```
 を変える
 

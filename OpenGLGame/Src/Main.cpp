@@ -356,8 +356,15 @@ int WINAPI WinMain
         glUseProgram(prog3D);
 
         // ユニフォーム変数にデータをコピー
+        // アプリ起動時からの経過時間の取得
         const float timer = static_cast<float>(glfwGetTime());
-        glProgramUniform1f(prog3D, 0, timer * 0.5f);
+        // 変数ユニフォームにデータワット
+        glProgramUniform1f
+        (
+            prog3D,         // プログラムオブジェクトの管理番号
+            0,              // 送り先ロケーション番号
+            timer * 0.5f    // 送るデータ
+        );
 
         // 図形を描画
         glDrawElementsInstanced

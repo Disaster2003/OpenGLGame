@@ -1,7 +1,7 @@
 /**
 * @file standard.frag
 */
-#version 450 // GLSLver * 100
+#version 450 // GLSL ver. * 100
 
 // シェーダへの入力
 layout(location=0) in vec4 inColor; // 頂点色

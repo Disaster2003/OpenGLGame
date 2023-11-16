@@ -1,7 +1,7 @@
 /**
 * @file standard.vert
 */
-#version 450 // GLSLver * 100
+#version 450 // GLSL ver. * 100
 
 // シェーダへの入力
 // layout修飾子 : 型やステージに固有の属性の設定
@@ -14,6 +14,9 @@ layout(location=0) in vec3 inPosition; // 頂点座標
 layout(location=0) out vec4 outColor; // 頂点色
 
 // プログラムからの入力
+// uniform変数
+// ->シェーダプログラムに
+// C++プログラムから値を渡すための変数
 layout(location=0) uniform float timer;
 
 void main()
