@@ -187,6 +187,7 @@ ctrl+shift+A
 >4. フラグメントシェーダをコンパイルする
 >5. 頂点シェーダとフラグメントシェーダをリンクする
 
+`Main.cpp`
 ```diff
  #include <string>       // 文字列型や文字列操作関数などが定義されているヘッダファイル
 +#include <vector>       // 動的配列型"vectorクラス"が定義されているヘッダファイル
@@ -332,6 +333,7 @@ ctrl+shift+A
 ```
 
 ### 2-3.シェーダの使用
+`Main.cpp`
 ```diff
  // VAOをOpenGLコンテキストに割り当てる    
  // 引数 : 割り当てる頂点属性配列の管理番号
@@ -350,6 +352,7 @@ ctrl+shift+A
 ロケーション番号と型が一致しない場合,
 シェーダのリンクに失敗する`
 
+`standard.vert`
 ```diff
  /**
  * @file standard.vert
@@ -380,12 +383,13 @@ ctrl+shift+A
 +    { 0, 0, 1, 1 }, // 青
 +  };
 +  int i = gl_VertexID + int(timer);
-+  outColor = colors[i % 4];
++  outColor = colors[i % 3];
  
    gl_Position = vec4(inPosition, 1);
  }
 ```
 
+`standard.frag`
 ```diff
  /**
  * @file standard.frag
@@ -406,11 +410,8 @@ ctrl+shift+A
  }
 ```
 
+`Main.cpp`
 ```diff
-/**
-* @file Main.cpp
-*/
-
  // 描画に使うシェーダを指定
  glUseProgram(prog3D);
  
@@ -422,7 +423,7 @@ ctrl+shift+A
 +(
 +    prog3D,         // プログラムオブジェクトの管理番号
 +    0,              // 送り先ロケーション番号
-+    timer * 0.5f    // 送るデータ
++    timer           // 送るデータ
 +);
  
  // 図形を描画
@@ -437,11 +438,8 @@ colors配列に白色の要素を追加して,
 
 四角形が4色で塗られるようにしましょう。
 
+`standard.vert`
 ```C++
-/**
-* @file standard.vert
-*/
-
 void main()
 {
   const vec4 colors[] = {
@@ -463,11 +461,8 @@ void main()
 
 C++プログラムまたはシェーダを変更しましょう。
 
+`Main.cpp`
 ```C++
-/**
-* @file Main.cpp
-*/
-
 // 描画に使うシェーダを指定
 glUseProgram(prog3D);
 
