@@ -125,6 +125,7 @@ ctrl+shift+A
 
 ->`追加`をクリック
 
+`standard.vert`
 ```diff
 +/**
 +* @file standard.vert
@@ -156,6 +157,7 @@ ctrl+shift+A
 
 ->`追加`をクリック
 
+`standard.frag`
 ```diff
 +/**
 +* @file standard.frag

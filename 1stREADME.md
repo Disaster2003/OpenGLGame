@@ -65,6 +65,7 @@ VisualStudioの起動
 
 ->`追加`をクリック
 
+`Main.cpp`
 ```diff
 +/**
 +* @file Main.cpp
@@ -185,6 +186,7 @@ VisualStudioの起動
 
 ->`OK`をクリック
 
+`Main.cpp`
 ```diff
  /**
  * @file Main.cpp
