@@ -243,6 +243,7 @@ glClearColorの引数を変更して,
 
 描画ウィンドウを青色(または好きな色)で塗りつぶしなさい。
 
+`Main.cpp`
 ```C++
 glClearColor
 (
@@ -260,6 +261,7 @@ OpenGLで図形を描画するには...
 >* インデックスデータ: 図形を構成する頂点の番号。<br>
 >* 頂点データ形式: 頂点データの解釈方法。<br>
 
+`Main.cpp`
 ```diff
      // gladLoadGLLoader : 必要な関数のアドレスを全て取得
      // glfwGetProcAddress : OpenGL関数名に対応する関数のアドレスを返す
@@ -338,6 +340,7 @@ OpenGLで図形を描画するには...
 
 `　必要な部分だけを有効に`
 
+`Main.cpp`
 ```diff
      // GPUメモリを確保のち,データをコピー
      // データのアドレスがnullptrなら,
@@ -444,6 +447,7 @@ OpenGLで図形を描画するには...
 
 表示しなさい。
 
+`Main.cpp`
 ```C++
 // 頂点データ(x,y,z座標が-1~+1の座標系における座標)
 const float vertexData[][3] =
@@ -491,6 +495,7 @@ GL_POINTSに変更してプログラムを実行し、
 
 確認したら、GL_TRIANGLESに戻しなさい。
 
+`Main.cpp`
 ```C++
 // 図形を描画
 glDrawElementsInstanced
@@ -511,6 +516,7 @@ OpenGLのバージョン4.3から、
 
 エラーを通知する機能が存在
 
+`Main.cpp`
 ```diff
  #include <string>       // 文字列型や文字列操作関数などが定義されているヘッダファイル
  
