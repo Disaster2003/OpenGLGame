@@ -857,10 +857,10 @@ box.pngをダウンロード
 -layout(location=0) out vec4 outColor;       // 頂点色
  layout(location=1) out vec2 outTexcoord;    // テクスチャ座標
  
--// プログラムからの入力
--// uniform変数
--// ->シェーダプログラムに
--// C++プログラムから値を渡すための変数
+ // プログラムからの入力
+ // uniform変数
+ // ->シェーダプログラムに
+ // C++プログラムから値を渡すための変数
 -layout(location=0) uniform float timer;
  
  void main()
@@ -976,5 +976,38 @@ timerユニフォーム変数を復活させて,
 
 `Main.cpp`
 ```C++
-
+ // 描画に使うシェーダを指定
+ glUseProgram(prog3D);
+ 
++// ユニフォーム変数にデータをコピー
++// アプリ起動時からの経過時間の取得
++const float timer = static_cast<float>(glfwGetTime());
++// 変数ユニフォームにデータワット
++glProgramUniform1f
++(
++    prog3D,         // プログラムオブジェクトの管理番号
++    0,              // 送り先ロケーション番号
++    timer * 0.5f    // 送るデータ
++);
+ 
+ // 変数ユニフォームにデータワット
+ glProgramUniform4fv
+ (
+```
+`standard.vert`
+```C++
+ // シェーダからの出力
+ layout(location=1) out vec2 outTexcoord;    // テクスチャ座標
+ 
+ // プログラムからの入力
+ // uniform変数
+ // ->シェーダプログラムに
+ // C++プログラムから値を渡すための変数
++layout(location=0) uniform float timer;
+ 
+ void main()
+ {
++  outTexcoord = inTexcoord + timer;
+   gl_Position = vec4(inPosition, 1.0);
+ }
 ```
