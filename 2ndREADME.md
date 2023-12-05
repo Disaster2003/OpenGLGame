@@ -529,3 +529,216 @@ box.pngをダウンロード
 ->保存
 
 ### 3-2.テクスチャの表示
+`Main.cpp`
+```diff
+     // シェーダ文字列のコンパイル
+     // 引数 : シェーダの管理番号
+     glCompileShader(object);
+     return object;
+ }
+
++/// <summary>
++/// テクスチャを読み込む
++/// </summary>
++/// <param name="filename">テクスチャファイル名</param>
++/// <returns>テクスチャの管理番号</returns>
++GLuint LoadTexture(const char* filename)
++{
++  // ファイルを開く
++  // std::ios::binary : バイナリモードの指定
++  std::ifstream file
++  (
++      filename,
++      std::ios::binary
++  );
++  // ファイルが正常に開けない(false)時,
++  // エラーメッセージを出力して,
++  // 0(オブジェクトが存在しない)を返して終了
++  if ( ! file)
++  {
++    char s[256];
++    snprintf
++    (
++        s,
++        256,
++        "[ERROR] %s: %sを開けません\n",
++        __func__,
++        filename
++    );
++    OutputDebugStringA(s);
++    return 0;
++  }
++
++  // ファイルサイズの取得
++  // 引数 : ファイルパス
++  const size_t filesize = std::filesystem::file_size(filename);
++  // ファイルサイズ分の領域を用意
++  std::vector<uint8_t> buffer(filesize);
++  // ファイルの読み込み
++  file.read
++  (
++      reinterpret_cast<char*>(buffer.data()),   // バッファアドレス
++      filesize                                  // 読み込むバイト数
++  );
++  // ファイルを閉じる
++  file.close();
++
++  // ヘッダから情報を取得
++  const size_t tgaHeaderSize = 18; // ヘッダ情報のバイト数
++  const int width = buffer[12] + buffer[13] * 256;
++  const int height = buffer[14] + buffer[15] * 256;
++
++  GLuint object = 0; // テクスチャの管理番号
++  // テクスチャの作成
++  glCreateTextures
++  (
++      GL_TEXTURE_2D,    // テクスチャの種類
++      1,                // 作成する個数
++      &object           // 番号を格納する配列のアドレス
++  );
++  // 画像データ分のGPUメモリ領域の確保
++  glTextureStorage2D
++  (
++      object,   // テクスチャの管理番号
++      1,        // 作成するレベル数(ミップマップ)
++      GL_RGBA8, // ピクセル形式
++      width,    // 幅
++      height    // 高さ
++  );
++  // 画像データをGPUメモリにコピー
++  glTextureSubImage2D
++  (
++      object,                       // テクスチャの管理番号
++      0,                            // コピー先のレイヤー番号
++      0,                            // コピー先のX座標(複数の画像をひとつにまとめる用 ex)スプライトシート,テクスチャアトラス)
++      0,                            // コピー先のY座標(複数の画像をひとつにまとめる用 ex)スプライトシート,テクスチャアトラス)
++      width,                        // コピーする画像の幅
++      height,                       // コピーする画像の高さ
++      GL_BGRA,                      // ピクセルに含まれる要素と順序
++      GL_UNSIGNED_BYTE,             // 要素の型
++      buffer.data() + tgaHeaderSize // 画像データのアドレス
++  );
++  return object;
++}
+
+ /// <summary>
+ /// エントリーポイント
+ /// </summary>
+ int WINAPI WinMain
+ (
+```
+```diff
+     // 0番目の頂点属性を設定
+     // このとき,OpenGLコンテキストにバインドされているVBOが,頂点属性にバインドされる
+     glVertexAttribPointer
+     (
+         0,        // 頂点属性配列のインデックス
+         3,        // データの要素数
+         GL_FLOAT, // データの型
+         GL_FALSE, // 正規化の有無
+         0,        // 次のデータまでのバイト数
+         0         // 最初のデータの位置
+     );
+ #pragma endregion
+ 
++#pragma region テクスチャの作成
++    GLuint tex = LoadTexture("Res/box.tga");
++#pragma endregion
+ 
+ #pragma region メインループの定義
+     // ウィンドウの終了要求が来ていなかった(0)時,
+     // メインループ処理を続ける
+     // 引数 : GLFWwindowへのポインタ
+     while (!glfwWindowShouldClose(window))
+     {
+```
+```diff
+ // 変数ユニフォームにデータワット
+ glProgramUniform1f
+ (
+     prog3D,         // プログラムオブジェクトの管理番号
+     0,              // 送り先ロケーション番号
+     timer * 0.5f    // 送るデータ
+ );
+ 
++// 描画に使うテクスチャを
++// (テクスチャ・イメージ・ユニットに)割り当て
++glBindTextures
++(
++    0,      // 割り当て開始インデックス
++    1,      // 割り当てる個数
++    &tex    // テクスチャ管理番号配列のアドレス
++);
+ 
+ // 図形を描画
+ glDrawElementsInstanced
+ (
+```
+
+| 定数名              | 種類 |
+|:-------------------:|:-----|
+| GL_TEXTURE_1D       | 一次元画像 |
+| GL_TEXTURE_2D       | 二次元画像 |
+| GL_TEXTURE_3D       | 三次元画像 |
+| GL_TEXTURE_CUBE_MAP | キューブマップ画像 |
+| GL_TEXTURE_2D_ARRAY | 二次元画像の配列 |
+| GL_TEXTURE_BUFFER   | 数値を格納するテクスチャ |
+
+| 名前                 | どこから確保するか | 管理対象   | 機能説明 |
+|:--------------------:|:------------------:|:----------:|:-----|
+| malloc               | メインメモリ       | (なし)     | メインメモリ上の領域を確保し、確保したメモリのアドレスを返す |
+| new                  | メインメモリ       | 任意の型   | メインメモリ上の領域を確保し、コンストラクタを実行し、確保したメモリのアドレスを返す |
+| glCreateBuffers      | (なし)             | バッファ   | GPUメモリを管理するバッファオブジェクトを作成する |
+| glNamedBufferStorage | GPUメモリ          | バッファ   | GPUメモリ上の領域を確保し、バッファオブジェクトに割り当てる |
+| glCreateTextures     | (なし)             | テクスチャ | GPUメモリを管理するテクスチャオブジェクトを作成する |
+| glTextureStorage2D   | GPUメモリ          | テクスチャ | GPUメモリ上の領域を確保し、テクスチャオブジェクトに割り当てる |
+
+| 定数名 | 赤成分のbit数 | 緑成分のbit数 | 青成分のbit数 | 透明度のbit数 |
+|:-:|:-:|:-:|:-:|:-:|
+| GL_R8      |  8 |  - |  - |  - |
+| GL_RGB8    |  8 |  8 |  8 |  - |
+| GL_RGBA8   |  8 |  8 |  8 |  8 |
+| GL_RGBA16F | 16 | 16 | 16 | 16 |
+| GL_RGB565  |  5 |  6 |  5 |  - |
+
+| 名前    | ピクセルに含まれる要素と順序 |
+|:-------:|:-----------------------------|
+| GL_RED  | 赤 |
+| GL_RG   | 赤, 緑 |
+| GL_RGB  | 赤, 緑, 青 |
+| GL_BGR  | 青, 緑, 赤 |
+| GL_RGBA | 赤, 緑, 青, 透明度 |
+| GL_BGRA | 青, 緑, 赤, 透明度 |
+
+| 名前                         | 型 |
+|:----------------------------:|:---|
+| GL_UNSIGNED_BYTE             | 8ビット符号なし整数 |
+| GL_UNSIGNED_SHORT            | 16ビット符号なし整数 |
+| GL_FLOAT                     | 32ビット浮動小数点数 |
+| GL_UNSIGNED_SHORT_5_6_5      | 16ビット符号なし整数<br>(上位ビットから5/6/5ビットに分割) |
+| GL_UNSIGNED_SHORT_5_6_5_REV> | 16ビット符号なし整数<br>(下位ビットから5/6/5ビットに分割) |
+
+```diff
+ // シェーダへの入力
+ layout(location=0) in vec4 inColor; // 頂点色
+ 
++// テクスチャサンプラ
++layout(binding=0) uniform sampler2D texColor;
+ 
+ // 出力する色データ
+ // out修飾子 : シェーダからの出力の格納
+ out vec4 outColor;
+ 
+ void main()
+ {
++	vec4 c = 
++		texture
++		(
++			texColor,				// サンプラ変数
++			gl_FragCoord.xy * 0.01	// テクスチャ座標
++		);
++	outColor = c * inColor;
+ }
+```
+
+### 3-3.テクスチャ座標の追加
