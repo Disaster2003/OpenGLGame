@@ -483,17 +483,6 @@ int WINAPI WinMain
         // 描画に使うシェーダを指定
         glUseProgram(prog3D);
 
-        // ユニフォーム変数にデータをコピー
-        // アプリ起動時からの経過時間の取得
-        const float timer = static_cast<float>(glfwGetTime());
-        // 変数ユニフォームにデータワット
-        glProgramUniform1f
-        (
-            prog3D,         // プログラムオブジェクトの管理番号
-            0,              // 送り先ロケーション番号
-            timer * 0.5f    // 送るデータ
-        );
-
         // 変数ユニフォームにデータワット
         glProgramUniform4fv
         (
@@ -516,7 +505,7 @@ int WINAPI WinMain
         glDrawElementsInstanced
         (
             GL_TRIANGLES,       // 基本図形の種類
-            6,                 // インデックスデータ数
+            6,                  // インデックスデータ数
             GL_UNSIGNED_SHORT,  // インデックスデータの型
             0,                  // インデックスデータの開始位置
             1                   // 描画する図形の数

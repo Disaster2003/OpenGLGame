@@ -4,7 +4,6 @@
 #version 450 // GLSL ver. * 100
 
 // シェーダへの入力
-layout(location=0) in vec4 inColor;		// 頂点色
 layout(location=1) in vec2 inTexcoord;	// テクスチャ座標
 
 // テクスチャサンプラ
@@ -12,6 +11,9 @@ layout(location=1) in vec2 inTexcoord;	// テクスチャ座標
 //            割り当てられたテクスチャを使う
 // binding : サンプラ変数が使用するユニットを選択する
 layout(binding=0) uniform sampler2D texColor;
+
+// プログラムからの入力
+layout(location=100) uniform vec4 color; // 物体の色
 
 // 出力する色データ
 // out修飾子 : シェーダからの出力の格納
@@ -26,5 +28,5 @@ void main()
 			texColor,
 			inTexcoord
 		);
-	outColor = c * inColor;
+	outColor = c * color;
 }
