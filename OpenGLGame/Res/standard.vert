@@ -18,9 +18,10 @@ layout(location=1) out vec2 outTexcoord;    // テクスチャ座標
 // uniform変数
 // ->シェーダプログラムに
 // C++プログラムから値を渡すための変数
+layout(location=0) uniform float timer;
 
 void main()
 {
-  outTexcoord = inTexcoord;
+  outTexcoord = inTexcoord + timer;
   gl_Position = vec4(inPosition, 1.0);
 }
