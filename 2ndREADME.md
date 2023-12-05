@@ -744,3 +744,102 @@ box.pngをダウンロード
 ```
 
 ### 3-3.テクスチャ座標
+`Main.cpp`
+```diff
+#pragma region 頂点データをGPUメモリにコピー
+    +// 頂点データ(x,y,z座標が-1~+1の座標系における座標)
+    +struct vec2 { float x, y; };
+    +struct vec3 { float x, y, z; };
+    +struct Vertex
+    +{
+    +    vec3 position; // 頂点座標
+    +    vec2 texcoord; // テクスチャ座標
+    +};
+    +const Vertex vertexData[] =
+    +{
+    +    { {-1,-1, 0 }, { 0, 0 } },
+    +    { { 1,-1, 0 }, { 1, 0 } },
+    +    { { 1, 1, 0 }, { 1, 1 } },
+    +    { {-1, 1, 0 }, { 0, 1 } },
+    +};
+     GLuint vbo = 0; // 頂点バッファの管理番号
+```
+```diff
+#pragma region インデックスデータをGPUメモリにコピー
+ // インデックスデータ(図形を構成する頂点番号)
+ const GLushort indexData[] =
+ {
++    0, 1, 2, 2, 3, 0,
+ };
+ GLuint ibo = 0; // インデックスバッファの管理番号
+```
+```diff
+     // 0番目の頂点属性を有効化
+     // 引数 : 有効にする頂点属性配列のインデックス
+     glEnableVertexAttribArray(0);
+ 
+     // 0番目の頂点属性を設定
+     // このとき,OpenGLコンテキストにバインドされているVBOが,
+     // 頂点属性にバインドされる
+     glVertexAttribPointer
+     (
+         0,              // 頂点属性配列のインデックス
+         3,              // データの要素数
+         GL_FLOAT,       // データの型
+         GL_FALSE,       // 正規化の有無
++        sizeof(Vertex), // 次のデータまでのバイト数
+         0               // 最初のデータの位置
+     );
+ 
++    // 1番目の頂点属性を有効化
++    // 引数 : 有効にする頂点属性配列のインデックス
++    glEnableVertexAttribArray(1);
++
++    // 1番目の頂点属性を設定
++    glVertexAttribPointer
++    (
++        1,                              // 頂点属性配列のインデックス
++        2,                              // データの要素数
++        GL_FLOAT,                       // データの型
++        GL_FALSE,                       // 正規化の有無
++        sizeof(Vertex),                 // 次のデータまでのバイト数
++        reinterpret_cast<const void*>   // 最初のデータの位置
++        (
++            // 構造体の先頭から特定のメンバまでの
++            // バイト数の計算
++            offsetof
++            (
++                Vertex,     // 構造体名
++                texcoord    // メンバ名
++            )
++        )
++    );
+ #pragma endregion
+ 
+ #pragma region テクスチャの作成
+```
+```diff
+ // 描画に使うテクスチャを
+ // (テクスチャ・イメージ・ユニットに)割り当て
+ glBindTextures
+ (
+     0,      // 割り当て開始インデックス
+     1,      // 割り当てる個数
+     &tex    // テクスチャ管理番号配列のアドレス
+ );
+ 
+ // 図形を描画
+ glDrawElementsInstanced
+ (
+     GL_TRIANGLES,       // 基本図形の種類
++    6,                  // インデックスデータ数
+     GL_UNSIGNED_SHORT,  // インデックスデータの型
+     0,                  // インデックスデータの開始位置
+     1                   // 描画する図形の数
+ );
+ // VAOの割り当てを解除
+ // 引数 : 割り当てる頂点属性配列の管理番号
+ glBindVertexArray(0);
+```
+
+### 3-4.頂点ごとに色変更->ユニフォーム変数を使ってひとつの色だけを指定する
