@@ -391,7 +391,8 @@ OpenGLで図形を描画するには...
 +    glEnableVertexAttribArray(0);
 +
 +    // 0番目の頂点属性を設定
-+    // このとき,OpenGLコンテキストにバインドされているVBOが,頂点属性にバインドされる
++    // このとき,OpenGLコンテキストにバインドされているVBOが,
++    // 頂点属性にバインドされる
 +    glVertexAttribPointer
 +    (
 +        0,        // 頂点属性配列のインデックス

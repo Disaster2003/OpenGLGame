@@ -4,7 +4,8 @@
 #version 450 // GLSL ver. * 100
 
 // シェーダへの入力
-layout(location=0) in vec4 inColor; // 頂点色
+layout(location=0) in vec4 inColor;		// 頂点色
+layout(location=1) in vec2 inTexcoord;	// テクスチャ座標
 
 // テクスチャサンプラ
 // sampler : 「テクスチャ・イメージ・ユニット」に
@@ -19,10 +20,11 @@ out vec4 outColor;
 void main()
 {
 	vec4 c = 
+		// テクスチャの読み込み
 		texture
 		(
-			texColor,				// サンプラ変数
-			gl_FragCoord.xy * 0.01	// テクスチャ座標
+			texColor,
+			inTexcoord
 		);
 	outColor = c * inColor;
 }
