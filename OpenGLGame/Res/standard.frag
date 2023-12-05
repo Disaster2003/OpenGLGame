@@ -7,6 +7,9 @@
 layout(location=0) in vec4 inColor; // 頂点色
 
 // テクスチャサンプラ
+// sampler : 「テクスチャ・イメージ・ユニット」に
+//            割り当てられたテクスチャを使う
+// binding : サンプラ変数が使用するユニットを選択する
 layout(binding=0) uniform sampler2D texColor;
 
 // 出力する色データ
