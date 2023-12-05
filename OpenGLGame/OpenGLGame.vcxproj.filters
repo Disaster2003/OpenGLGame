@@ -22,7 +22,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <None Include="..\2ndREADME.md" />
     <None Include="Res\standard.vert" />
     <None Include="Res\standard.frag" />
   </ItemGroup>
