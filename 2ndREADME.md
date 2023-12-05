@@ -843,9 +843,129 @@ box.pngをダウンロード
 ```
 
 ### 3-4.頂点ごとに色変更->ユニフォーム変数を使ってひとつの色だけを指定する
+`standard.vert`
+```diff
+ // シェーダへの入力
+ // layout修飾子 : 型やステージに固有の属性の設定
+ // location : 他のプログラムが変数にアクセスするための番号の付与
+ // in修飾子 : バーテックスプラーステージから送られた値の設定
+ //            (glVertexArrayAttribPointer関数によって指定した頂点データ)
+ layout(location=0) in vec3 inPosition; // 頂点座標
+ layout(location=1) in vec2 inTexcoord; // テクスチャ座標
+ 
+ // シェーダからの出力
+-layout(location=0) out vec4 outColor;       // 頂点色
+ layout(location=1) out vec2 outTexcoord;    // テクスチャ座標
+ 
+-// プログラムからの入力
+-// uniform変数
+-// ->シェーダプログラムに
+-// C++プログラムから値を渡すための変数
+-layout(location=0) uniform float timer;
+ 
+ void main()
+ {
+-  const vec4 colors[] = {
+-    { 1, 0, 0, 1 }, // 赤
+-    { 0, 1, 0, 1 }, // 緑
+-    { 0, 0, 1, 1 }, // 青
+-    { 1, 1, 1, 1 }, // 白
+-  };
+-  int i = gl_VertexID + int(timer);
+-  outColor = colors[i % 4];
+   outTexcoord = inTexcoord;
+   gl_Position = vec4(inPosition, 1);
+ }
+```
+`standard.frag`
+```diff
+ /**
+ * @file standard.frag
+ */
+ #version 450 // GLSL ver. * 100
+ 
+ // シェーダへの入力
+-layout(location=0) in vec4 inColor;		// 頂点色
+ layout(location=1) in vec2 inTexcoord;	// テクスチャ座標
+ 
+ // テクスチャサンプラ
+ // sampler : 「テクスチャ・イメージ・ユニット」に
+ //            割り当てられたテクスチャを使う
+ // binding : サンプラ変数が使用するユニットを選択する
+ layout(binding=0) uniform sampler2D texColor;
+ 
++// プログラムからの入力
++// location=100何で->頂点シェーダと番号が重複しないようにするため
++layout(location=100) uniform vec4 color; // 物体の色
 
+ // 出力する色データ
+ // out修飾子 : シェーダからの出力の格納
+ out vec4 outColor;
+ 
+ void main()
+ {
+ 	vec4 c = 
+ 		// テクスチャの読み込み
+ 		texture
+ 		(
+ 			texColor,
+ 			inTexcoord
+ 		);
++	outColor = c * color;
+ }
+```
+`Main.cpp`
+```diff
+         reinterpret_cast<const void*>   // 最初のデータの位置
+         (
+             // 構造体の先頭から特定のメンバまでの
+             // バイト数の計算
+             offsetof
+             (
+                 Vertex,     // 構造体名
+                 texcoord    // メンバ名
+             )
+         )
+     );
+ #pragma endregion
+ 
++#pragma region 物体のパラメータ
++    class GameObject
++    {
++    public:
++        float color[4] = { 1, 1, 1, 1 }; // 物体の色
++    };
++    GameObject box0;
++#pragma endregion
+ 
+ #pragma region テクスチャの作成
+     GLuint tex = LoadTexture("Res/box.tga");
+ #pragma endregion
+```
+```diff
+ // 描画に使うシェーダを指定
+ glUseProgram(prog3D);
+ 
++// 変数ユニフォームにデータワット
++glProgramUniform4fv
++(
++    prog3D,     // プログラムオブジェクトの管理番号
++    100,        // 送り先ロケーション番号
++    1,          // データ数
++    box0.color  // データのアドレス
++);
+ 
+ // 描画に使うテクスチャを
+ // (テクスチャ・イメージ・ユニットに)割り当て
+ glBindTextures
+ (
+     0,      // 割り当て開始インデックス
+     1,      // 割り当てる個数
+     &tex    // テクスチャ管理番号配列のアドレス
+ );
+```
 
-## 課題01
+## 課題03
 内容
 
 水面テクスチャを用意して箱テクスチャを置き換え,

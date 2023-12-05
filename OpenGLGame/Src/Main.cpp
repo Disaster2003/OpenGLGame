@@ -443,6 +443,15 @@ int WINAPI WinMain
     );
 #pragma endregion
 
+#pragma region 物体のパラメータ
+    class GameObject
+    {
+    public:
+        float color[4] = { 1, 1, 1, 1 }; // 物体の色
+    };
+    GameObject box0;
+#pragma endregion
+
 #pragma region テクスチャの作成
     GLuint tex = LoadTexture("Res/box.tga");
 #pragma endregion
@@ -483,6 +492,15 @@ int WINAPI WinMain
             prog3D,         // プログラムオブジェクトの管理番号
             0,              // 送り先ロケーション番号
             timer * 0.5f    // 送るデータ
+        );
+
+        // 変数ユニフォームにデータワット
+        glProgramUniform4fv
+        (
+            prog3D,     // プログラムオブジェクトの管理番号
+            100,        // 送り先ロケーション番号
+            1,          // データ数
+            box0.color  // データのアドレス
         );
 
         // 描画に使うテクスチャを
