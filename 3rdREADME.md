@@ -544,4 +544,69 @@ Z軸の値(Z座標)を変更しなさい.
  #pragma region テクスチャの作成
 ```
 
-### 1-7.アスペクト比
+### 1-7.アスペクト比の手直し
+>1. GPU : NDC座標系(-1~+1の範囲の座標)
+>2. CPU : ワールド座標系<br>
+(標準的な座標を扱う空間)<br>
+※「図形の拡大縮小・回転・平行移動」の操作ができるもの
+>3. ワールド座標系->NDC座標系に変換が必要
+>4. 遠近法が有効な場合,クリップ座標系の変換を間に挟む
+
+`standard.vert`
+```diff
+ // シェーダからの出力
+ layout(location=1) out vec2 outTexcoord;    // テクスチャ座標
+ 
+ // プログラムからの入力
+ // uniform変数
+ // ->シェーダプログラムに
+ // C++プログラムから値を渡すための変数
+ layout(location=0) uniform vec3 scale;			// 拡大率
+ layout(location=1) uniform vec3 position;		// 位置
+ layout(location=2) uniform vec2 sinCosY;		// Y軸回転
++layout(location=3) uniform float aspectRatio;	// アスペクト比
+ 
+ void main()
+ {
+```
+```diff
+ // 平行移動
+ gl_Position.xyz += position;
+ 
++// ワールド座標系からクリップ座標系に変換
++gl_Position.x /= aspectRatio;
+ 
+ // 遠近法を有効にする
+ gl_Position.zw = -gl_Position.zz;
+```
+
+`Main.cpp`
+```diff
+ // 描画に使うシェーダを指定
+ glUseProgram(prog3D);
+
++// フレームバッファの大きさを取得
++int fbWidth, fbHeight;
++glfwGetFramebufferSize
++(
++    window,     // GLFWウィンドウオブジェクトのアドレス
++    &fbWidth,   // 描画ウィンドウの幅を格納する変数のアドレス
++    &fbHeight   // 描画ウィンドウの高さを格納する変数のアドレス
++);
++
++// アスペクト比を設定
++const float aspectRatio =
++  static_cast<float>(fbWidth) / static_cast<float>(fbHeight);
++glProgramUniform1f
++(
++    prog3D,     // プログラムオブジェクトの管理番号
++    3,          // 送り先ロケーション番号
++    aspectRatio // データのアドレス
++);
+
+ // 変数ユニフォームにデータワット
+ glProgramUniform4fv
+ (
+```
+
+### 1-8.ビューポートの手直し
