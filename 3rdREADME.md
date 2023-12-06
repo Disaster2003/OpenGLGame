@@ -75,3 +75,22 @@
  glBindTextures
  (
 ```
+
+## 課題01
+内容
+
+図形のX, Y, Z軸すべての大きさを
+
+0.2にしなさい.
+```C++
+#pragma region 物体のパラメータ
+    class GameObject
+    {
+    public:
+        vec3 scale = { 1,1,1 };          // 物体の拡大率
+        float color[4] = { 1, 1, 1, 1 }; // 物体の色
+    };
+    GameObject box0;
+    box0.scale = { 0.2f,0.2f,0.2f };
+#pragma endregion
+```
