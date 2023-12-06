@@ -18,17 +18,24 @@ layout(location=1) out vec2 outTexcoord;    // テクスチャ座標
 // uniform変数
 // ->シェーダプログラムに
 // C++プログラムから値を渡すための変数
-layout(location=0) uniform vec3 scale; // 拡大率
-layout(location=1) uniform vec3 position; // 位置
+layout(location=0) uniform vec3 scale;		// 拡大率
+layout(location=1) uniform vec3 position;	// 位置
+layout(location=2) uniform vec2 sinCosY;	// Y軸回転
 
 void main()
 {
-  outTexcoord = inTexcoord;
-  vec3 pos = inPosition * scale + position;
-  gl_Position = 
-	vec4
-	(
-		pos,
-		1.0
-	);
+	outTexcoord = inTexcoord;
+	// スケール
+	vec3 pos = inPosition * scale;
+	
+	// Y軸回転
+	float sinY = sinCosY.x;
+	float cosY = sinCosY.y;
+	gl_Position.x = pos.x * cosY + pos.z * sinY;
+	gl_Position.y = pos.y;
+	gl_Position.z = pos.x * -sinY + pos.z * cosY;
+	
+	// 平行移動
+	gl_Position.xyz += position;
+	gl_Position.w = 1;
 }

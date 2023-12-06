@@ -448,6 +448,7 @@ int WINAPI WinMain
     {
     public:
         vec3 position = { 0, 0, 0 };    // 物体の位置
+        vec3 rotation = { 0, 0, 0 };    // 物体の回転角度
         vec3 scale = { 1,1,1 };         // 物体の拡大率
         float color[4] = { 1, 1, 1, 1 };// 物体の色
     };
@@ -471,6 +472,9 @@ int WINAPI WinMain
     // 引数 : GLFWwindowへのポインタ
     while (!glfwWindowShouldClose(window))
     {
+        // box0を回転
+        box0.rotation.y += 0.0001f;
+
         // バックバッファを消去するときに使用する色を指定
         glClearColor
         (
@@ -514,6 +518,13 @@ int WINAPI WinMain
             1,                  // データ数
             &box0.position.x    // データのアドレス
         );
+        glProgramUniform2f
+        (
+            prog3D,
+            2,
+            sin(box0.rotation.y),
+            cos(box0.rotation.y)
+        );
 
         // 描画に使うテクスチャを
         // (テクスチャ・イメージ・ユニットに)割り当て
@@ -555,6 +566,13 @@ int WINAPI WinMain
             1,                  // 送り先ロケーション番号
             1,                  // データ数
             &box1.position.x    // データのアドレス
+        );
+        glProgramUniform2f
+        (
+            prog3D,
+            2,
+            sin(box1.rotation.y),
+            cos(box1.rotation.y)
         );
         glDrawElementsInstanced
         (
