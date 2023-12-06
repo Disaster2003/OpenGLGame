@@ -215,3 +215,47 @@
      &tex    // テクスチャ管理番号配列のアドレス
  );
 ```
+
+## 課題02
+内容
+
+図形の座標を変更し,
+
+画面の好きな位置に表示しなさい.
+```C++
+     // 1番目の頂点属性を設定
+     glVertexAttribPointer
+     (
+         1,                              // 頂点属性配列のインデックス
+         2,                              // データの要素数
+         GL_FLOAT,                       // データの型
+         GL_FALSE,                       // 正規化の有無
+         sizeof(Vertex),                 // 次のデータまでのバイト数
+         reinterpret_cast<const void*>   // 最初のデータの位置
+         (
+             // 構造体の先頭から特定のメンバまでの
+             // バイト数の計算
+             offsetof
+             (
+                 Vertex,     // 構造体名
+                 texcoord    // メンバ名
+             )
+         )
+     );
+ #pragma endregion
+ 
+ #pragma region 物体のパラメータ
+     class GameObject
+     {
+     public:
+         vec3 position = { 0, 0, 0 };    // 物体の位置
+         vec3 scale = { 1,1,1 };         // 物体の拡大率
+         float color[4] = { 1, 1, 1, 1 };// 物体の色
+     };
+     GameObject box0;
+     box0.scale = { 0.2f,0.2f,0.2f };
+     box0.position = { ?,?,0 };
+ #pragma endregion
+ 
+ #pragma region テクスチャの作成
+```
