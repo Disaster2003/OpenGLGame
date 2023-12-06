@@ -454,7 +454,7 @@ int WINAPI WinMain
     };
     GameObject box0;
     box0.scale = { 0.2f,0.2f,0.2f };
-    box0.position = { 0.6f,0.6f,0 };
+    box0.position = { 0.6f,0.6f,-1 };
 
     GameObject box1;
     box1.color[1] = 0.5f; // —Î¬•ª‚Ì–¾‚é‚³‚ğ”¼•ª‚É‚µ‚Ä‚İ‚é

@@ -469,3 +469,48 @@ GLSLの「スウィズリング(swizzling)」
  glDrawElementsInstanced
  (
 ```
+
+`C言語の三角関数`
+
+×円周を0～360度で表す「度数法(どすうほう)」
+
+〇0～2πで表す「弧度法(こどほう)」
+
+`度数法から弧度法への変換`
+```C++
+弧度法の値 = 度数法の値 / 180 * π
+```
+
+### 1-5.遠近法の有効化
+`Main.cpp`
+```diff
+ #pragma region 物体のパラメータ
+     class GameObject
+     {
+     public:
+         vec3 position = { 0, 0, 0 };    // 物体の位置
+         vec3 rotation = { 0, 0, 0 };    // 物体の回転角度
+         vec3 scale = { 1,1,1 };         // 物体の拡大率
+         float color[4] = { 1, 1, 1, 1 };// 物体の色
+     };
+     GameObject box0;
+     box0.scale = { 0.2f,0.2f,0.2f };
++    box0.position = { 0.6f,0.6f,-1 };
+ 
+     GameObject box1;
+     box1.color[1] = 0.5f; // 緑成分の明るさを半分にしてみる
+     box1.scale = { 0.2f, 0.2f, 0.2f };
+     box1.position = { 0, 0, 0 };
+ #pragma endregion
+ 
+ #pragma region テクスチャの作成
+```
+`standard.vert`
+```diff
+ 	// 平行移動
+ 	gl_Position.xyz += position;
+ 
++	// 遠近法を有効にする
++	gl_Position.zw = -gl_Position.zz;
+ }
+```

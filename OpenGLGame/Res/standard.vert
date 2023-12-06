@@ -37,5 +37,7 @@ void main()
 	
 	// •½sˆÚ“®
 	gl_Position.xyz += position;
-	gl_Position.w = 1;
+
+	// ‰“‹ß–@‚ğ—LŒø‚É‚·‚é
+	gl_Position.zw = -gl_Position.zz;
 }
