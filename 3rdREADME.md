@@ -610,3 +610,28 @@ Z軸の値(Z座標)を変更しなさい.
 ```
 
 ### 1-8.ビューポートの手直し
+```diff
+ // フレームバッファの大きさを取得
+ int fbWidth, fbHeight;
+ glfwGetFramebufferSize
+ (
+     window,     // GLFWウィンドウオブジェクトのアドレス
+     &fbWidth,   // 描画ウィンドウの幅を格納する変数のアドレス
+     &fbHeight   // 描画ウィンドウの高さを格納する変数のアドレス
+ );
+
++// ビューポートを設定
++glViewport
++(
++    0,          // 描画範囲の左下Xの座標
++    0,          // 描画範囲の左下のY座標
++    fbWidth,    // 描画範囲の幅
++    fbHeight    // 描画範囲の高さ
++);
+ 
+ // アスペクト比を設定
+ const float aspectRatio =
+   static_cast<float>(fbWidth) / static_cast<float>(fbHeight);
+ glProgramUniform1f
+ (
+```
