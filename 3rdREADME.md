@@ -210,10 +210,6 @@
  // (テクスチャ・イメージ・ユニットに)割り当て
  glBindTextures
  (
-     0,      // 割り当て開始インデックス
-     1,      // 割り当てる個数
-     &tex    // テクスチャ管理番号配列のアドレス
- );
 ```
 
 ## 課題02
@@ -331,3 +327,145 @@
 ```
 
 ### 1-4.図形の回転
+図形の回転は,高校数学IIの三角関数の
+
+「点の回転」の式を使えば実現できます.
+`XY平面上の回転`
+```C++
+点P(x, y)を原点まわりにθ度回転させた点Q(x', y')を求める式
+x' = x * cosθ + y * -sinθ
+y' = x * sinθ + y * cosθ
+```
+
+`回転軸はY軸,操作対象となる座標はXとZ`
+`Z軸の向きが奥に向かってプラスの式`
+```C++
+x' = x * cosθ + z * -sinθ
+z' = x * sinθ + z * cosθ
+```
+
+<p align="center">
+<img src="Image/position.png" width="100%" /><br>
+</p>
+
+`座標系の違いはZ軸の向きだけ`
+`->X座標に加算するZ成分と,`
+`  Z座標に加算するX成分の符号を反転`
+`手前に向かってプラスの式(OpenGL対応)`
+```C++
+x' = x * cosθ + z * sinθ
+z' = x * -sinθ + z * cosθ
+```
+
+`standard.vert`
+```diff
+ // シェーダからの出力
+ layout(location=1) out vec2 outTexcoord;    // テクスチャ座標
+ 
+ // プログラムからの入力
+ // uniform変数
+ // ->シェーダプログラムに
+ // C++プログラムから値を渡すための変数
+ layout(location=0) uniform vec3 scale;		// 拡大率
+ layout(location=1) uniform vec3 position;	// 位置
++layout(location=2) uniform vec2 sinCosY;	// Y軸回転
+ 
+ void main()
+ {
++	outTexcoord = inTexcoord;
++	// スケール
++	vec3 pos = inPosition * scale;
++	
++	// Y軸回転
++	float sinY = sinCosY.x;
++	float cosY = sinCosY.y;
++	gl_Position.x = pos.x * cosY + pos.z * sinY;
++	gl_Position.y = pos.y;
++	gl_Position.z = pos.x * -sinY + pos.z * cosY;
++	
++	// 平行移動
++	gl_Position.xyz += position;
++	gl_Position.w = 1;
+ }
+```
+
+gl_Position.xyzという書き方は,
+
+GLSLの「スウィズリング(swizzling)」
+
+`Main.cpp`
+```diff
+ #pragma region 物体のパラメータ
+     class GameObject
+     {
+     public:
+         vec3 position = { 0, 0, 0 };    // 物体の位置
++        vec3 rotation = { 0, 0, 0 };    // 物体の回転角度
+         vec3 scale = { 1,1,1 };         // 物体の拡大率
+         float color[4] = { 1, 1, 1, 1 };// 物体の色
+     };
+     GameObject box0;
+     box0.scale = { 0.2f,0.2f,0.2f };
+     box0.position = { 0.6f,0.6f,0 };
+ 
+     GameObject box1;
+     box1.color[1] = 0.5f; // 緑成分の明るさを半分にしてみる
+     box1.scale = { 0.2f, 0.2f, 0.2f };
+     box1.position = { 0, 0, 0 };
+ #pragma endregion
+ 
+ #pragma region テクスチャの作成
+```
+```diff
+ #pragma region メインループの定義
+ // ウィンドウの終了要求が来ていなかった(0)時,
+ // メインループ処理を続ける
+ // 引数 : GLFWwindowへのポインタ
+ while (!glfwWindowShouldClose(window))
+ {
++    // box0を回転
++    box0.rotation.y += 0.0001f;
+ 
+     // バックバッファを消去するときに使用する色を指定
+     glClearColor
+     (
+```
+```diff
+ glProgramUniform3fv
+ (
+     prog3D,             // プログラムオブジェクトの管理番号
+     1,                  // 送り先ロケーション番号
+     1,                  // データ数
+     &box0.position.x    // データのアドレス
+ );
++glProgramUniform2f
++(
++    prog3D,
++    2,
++    sin(box0.rotation.y),
++    cos(box0.rotation.y)
++);
+ 
+ // 描画に使うテクスチャを
+ // (テクスチャ・イメージ・ユニットに)割り当て
+ glBindTextures
+ (
+```
+```diff
+ glProgramUniform3fv
+ (
+     prog3D,             // プログラムオブジェクトの管理番号
+     1,                  // 送り先ロケーション番号
+     1,                  // データ数
+     &box1.position.x    // データのアドレス
+ );
++glProgramUniform2f
++(
++    prog3D,
++    2,
++    sin(box1.rotation.y),
++    cos(box1.rotation.y)
++);
+ glDrawElementsInstanced
+ (
+```
