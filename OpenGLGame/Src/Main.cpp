@@ -496,6 +496,25 @@ int WINAPI WinMain
         // 描画に使うシェーダを指定
         glUseProgram(prog3D);
 
+        // フレームバッファの大きさを取得
+        int fbWidth, fbHeight;
+        glfwGetFramebufferSize
+        (
+            window,     // GLFWウィンドウオブジェクトのアドレス
+            &fbWidth,   // 描画ウィンドウの幅を格納する変数のアドレス
+            &fbHeight   // 描画ウィンドウの高さを格納する変数のアドレス
+        );
+    
+        // アスペクト比を設定
+        const float aspectRatio =
+          static_cast<float>(fbWidth) / static_cast<float>(fbHeight);
+        glProgramUniform1f
+        (
+            prog3D,     // プログラムオブジェクトの管理番号
+            3,          // 送り先ロケーション番号
+            aspectRatio // データのアドレス
+        );
+
         // 変数ユニフォームにデータワット
         glProgramUniform4fv
         (

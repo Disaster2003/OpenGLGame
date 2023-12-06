@@ -18,9 +18,10 @@ layout(location=1) out vec2 outTexcoord;    // テクスチャ座標
 // uniform変数
 // ->シェーダプログラムに
 // C++プログラムから値を渡すための変数
-layout(location=0) uniform vec3 scale;		// 拡大率
-layout(location=1) uniform vec3 position;	// 位置
-layout(location=2) uniform vec2 sinCosY;	// Y軸回転
+layout(location=0) uniform vec3 scale;			// 拡大率
+layout(location=1) uniform vec3 position;		// 位置
+layout(location=2) uniform vec2 sinCosY;		// Y軸回転
+layout(location=3) uniform float aspectRatio;	// アスペクト比
 
 void main()
 {
@@ -37,6 +38,9 @@ void main()
 	
 	// 平行移動
 	gl_Position.xyz += position;
+
+	// ワールド座標系からクリップ座標系に変換
+	gl_Position.x /= aspectRatio;
 
 	// 遠近法を有効にする
 	gl_Position.zw = -gl_Position.zz;
