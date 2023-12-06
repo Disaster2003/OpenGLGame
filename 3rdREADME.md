@@ -514,3 +514,32 @@ GLSLの「スウィズリング(swizzling)」
 +	gl_Position.zw = -gl_Position.zz;
  }
 ```
+
+## 課題03
+内容
+
+box1が画面に表示されるように,
+
+Z軸の値(Z座標)を変更しなさい.
+```C++
+ #pragma region 物体のパラメータ
+     class GameObject
+     {
+     public:
+         vec3 position = { 0, 0, 0 };    // 物体の位置
+         vec3 rotation = { 0, 0, 0 };    // 物体の回転角度
+         vec3 scale = { 1,1,1 };         // 物体の拡大率
+         float color[4] = { 1, 1, 1, 1 };// 物体の色
+     };
+     GameObject box0;
+     box0.scale = { 0.2f,0.2f,0.2f };
++    box0.position = { 0.6f,0.6f,-1 };
+ 
+     GameObject box1;
+     box1.color[1] = 0.5f; // 緑成分の明るさを半分にしてみる
+     box1.scale = { 0.2f, 0.2f, 0.2f };
+     box1.position = { 0, 0, ? };
+ #pragma endregion
+ 
+ #pragma region テクスチャの作成
+```

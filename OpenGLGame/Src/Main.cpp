@@ -459,7 +459,7 @@ int WINAPI WinMain
     GameObject box1;
     box1.color[1] = 0.5f; // 緑成分の明るさを半分にしてみる
     box1.scale = { 0.2f, 0.2f, 0.2f };
-    box1.position = { 0, 0, 0 };
+    box1.position = { 0, 0, -1 };
 #pragma endregion
 
 #pragma region テクスチャの作成
