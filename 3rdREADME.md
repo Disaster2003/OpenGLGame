@@ -261,3 +261,71 @@
 ```
 
 ### 1-3.図形の複数表示
+`Main.cpp`
+```diff
+ #pragma region 物体のパラメータ
+     class GameObject
+     {
+     public:
+         vec3 position = { 0, 0, 0 };    // 物体の位置
+         vec3 scale = { 1,1,1 };         // 物体の拡大率
+         float color[4] = { 1, 1, 1, 1 };// 物体の色
+     };
+     GameObject box0;
+     box0.scale = { 0.2f,0.2f,0.2f };
+     box0.position = { 0.6f,0.6f,0 };
+ 
++    GameObject box1;
++    box1.color[1] = 0.5f; // 緑成分の明るさを半分にしてみる
++    box1.scale = { 0.2f, 0.2f, 0.2f };
++    box1.position = { 0, 0, 0 };
+ #pragma endregion
+ 
+ #pragma region テクスチャの作成
+```
+```diff
+ // 図形を描画
+ glDrawElementsInstanced
+ (
+     GL_TRIANGLES,       // 基本図形の種類
+     6,                  // インデックスデータ数
+     GL_UNSIGNED_SHORT,  // インデックスデータの型
+     0,                  // インデックスデータの開始位置
+     1                   // 描画する図形の数
+ );
+ 
++// ふたつめの図形を描画
++glProgramUniform4fv
++(
++    prog3D,     // プログラムオブジェクトの管理番号
++    100,        // 送り先ロケーション番号
++    1,          // データ数
++    box1.color  // データのアドレス
++);
++glProgramUniform3fv
++(
++    prog3D,         // プログラムオブジェクトの管理番号
++    0,              // 送り先ロケーション番号
++    1,              // データ数
++    &box1.scale.x   // データのアドレス
++);
++glProgramUniform3fv
++(
++    prog3D,             // プログラムオブジェクトの管理番号
++    1,                  // 送り先ロケーション番号
++    1,                  // データ数
++    &box1.position.x    // データのアドレス
++);
++glDrawElementsInstanced
++(
++    GL_TRIANGLES,       // 基本図形の種類
++    6,                  // インデックスデータ数
++    GL_UNSIGNED_SHORT,  // インデックスデータの型
++    0,                  // インデックスデータの開始位置
++    1                   // 描画する図形の数
++);
+ 
+ // VAOの割り当てを解除
+ // 引数 : 割り当てる頂点属性配列の管理番号
+ glBindVertexArray(0);
+```
