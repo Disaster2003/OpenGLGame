@@ -19,11 +19,12 @@ layout(location=1) out vec2 outTexcoord;    // テクスチャ座標
 // ->シェーダプログラムに
 // C++プログラムから値を渡すための変数
 layout(location=0) uniform vec3 scale; // 拡大率
+layout(location=1) uniform vec3 position; // 位置
 
 void main()
 {
   outTexcoord = inTexcoord;
-  vec3 pos = inPosition * scale;
+  vec3 pos = inPosition * scale + position;
   gl_Position = 
 	vec4
 	(

@@ -82,6 +82,7 @@
 図形のX, Y, Z軸すべての大きさを
 
 0.2にしなさい.
+`Main.cpp`
 ```C++
 #pragma region 物体のパラメータ
     class GameObject
@@ -93,4 +94,10 @@
     GameObject box0;
     box0.scale = { 0.2f,0.2f,0.2f };
 #pragma endregion
+```
+
+### 1-2.平行移動
+`standard.vert`
+```diff
+
 ```
