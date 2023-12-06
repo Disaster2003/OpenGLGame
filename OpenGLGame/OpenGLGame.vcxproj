@@ -138,6 +138,7 @@
     <Text Include="..\授業進行度.txt" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\3rdREADME.md" />
     <None Include="packages.config" />
     <None Include="Res\standard.frag" />
     <None Include="Res\standard.vert" />
