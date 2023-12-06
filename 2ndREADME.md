@@ -141,7 +141,12 @@ ctrl+shift+A
 +
 +void main()
 +{
-+  gl_Position = vec4(inPosition, 1);
++  gl_Position = 
++   vec4
++   (
++       inPosition,
++       1
++   );
 +}
 ```
 
@@ -387,7 +392,12 @@ ctrl+shift+A
 +  int i = gl_VertexID + int(timer);
 +  outColor = colors[i % 3];
  
-   gl_Position = vec4(inPosition, 1);
+   gl_Position = 
+    vec4
+    (
+        inPosition,
+        1
+    );
  }
 ```
 
@@ -453,7 +463,12 @@ void main()
   int i = gl_VertexID + int(timer);
   outColor = colors[i % 4];
 
-  gl_Position = vec4(inPosition, 1);
+  gl_Position = 
+    vec4
+    (
+        inPosition,
+        1
+    );
 ```
 
 ## 課題02
@@ -874,7 +889,12 @@ box.pngをダウンロード
 -  int i = gl_VertexID + int(timer);
 -  outColor = colors[i % 4];
    outTexcoord = inTexcoord;
-   gl_Position = vec4(inPosition, 1);
+   gl_Position = 
+    vec4
+    (
+        inPosition,
+        1
+    );
  }
 ```
 `standard.frag`

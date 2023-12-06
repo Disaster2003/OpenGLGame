@@ -447,9 +447,11 @@ int WINAPI WinMain
     class GameObject
     {
     public:
+        vec3 scale = { 1,1,1 };          // 物体の拡大率
         float color[4] = { 1, 1, 1, 1 }; // 物体の色
     };
     GameObject box0;
+    box0.scale = { 0.2f,0.2f,0.2f };
 #pragma endregion
 
 #pragma region テクスチャの作成
@@ -490,6 +492,13 @@ int WINAPI WinMain
             100,        // 送り先ロケーション番号
             1,          // データ数
             box0.color  // データのアドレス
+        );
+        glProgramUniform3fv
+        (
+            prog3D,         // プログラムオブジェクトの管理番号
+            0,              // 送り先ロケーション番号
+            1,              // データ数
+            &box0.scale.x   // データのアドレス
         );
 
         // 描画に使うテクスチャを
