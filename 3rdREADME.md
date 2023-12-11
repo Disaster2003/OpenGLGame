@@ -913,3 +913,80 @@ if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
 ```
 
 ### 3-2.立方体の定義
+`Main.cpp`
+```diff
+ struct Vertex
+ {
+     vec3 position; // 頂点座標
+     vec2 texcoord; // テクスチャ座標
+ };
+ const Vertex vertexData[] =
+ {
++    // +Z(手前の面)
++    { {-1,-1, 1 }, { 0, 0 } },
++    { { 1,-1, 1 }, { 1, 0 } },
++    { { 1, 1, 1 }, { 1, 1 } },
++    { {-1, 1, 1 }, { 0, 1 } },
++
++    // -Z(奥の面)
++    { { 1,-1,-1 }, { 0, 0 } },
++    { {-1,-1,-1 }, { 1, 0 } },
++    { {-1, 1,-1 }, { 1, 1 } },
++    { { 1, 1,-1 }, { 0, 1 } },
+ };
+ GLuint vbo = 0; // 頂点バッファの管理番号
+```
+```diff
+ #pragma region インデックスデータをGPUメモリにコピー
+     // インデックスデータ(図形を構成する頂点番号)
+     const GLushort indexData[] =
+     {
+         0, 1, 2, 2, 3, 0,
++        4, 5, 6, 6, 7, 4,
+     };
+     GLuint ibo = 0; // インデックスバッファの管理番号
+```
+```diff
+ glBindTextures
+ (
+     0,      // 割り当て開始インデックス
+     1,      // 割り当てる個数
+     &tex    // テクスチャ管理番号配列のアドレス
+ );
+
+ // 図形を描画
++const GLsizei indexCount = std::size(indexData);    // インデックス数
+ glDrawElementsInstanced
+ (
+     GL_TRIANGLES,       // 基本図形の種類
++    indexCount,         // インデックスデータ数
+     GL_UNSIGNED_SHORT,  // インデックスデータの型
+     0,                  // インデックスデータの開始位置
+     1                   // 描画する図形の数
+ );
+
+ // ふたつめの図形を描画
+ glProgramUniform4fv
+ (
+```
+```diff
+ glProgramUniform2f
+ (
+     prog3D,
+     2,
+     sin(box1.rotation.y),
+     cos(box1.rotation.y)
+ );
+ glDrawElementsInstanced
+ (
+     GL_TRIANGLES,       // 基本図形の種類
++    indexCount,         // インデックスデータ数
+     GL_UNSIGNED_SHORT,  // インデックスデータの型
+     0,                  // インデックスデータの開始位置
+     1                   // 描画する図形の数
+ );
+ 
+ // VAOの割り当てを解除
+ // 引数 : 割り当てる頂点属性配列の管理番号
+ glBindVertexArray(0);
+```
