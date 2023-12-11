@@ -452,6 +452,10 @@ int WINAPI WinMain
         vec3 scale = { 1,1,1 };         // 物体の拡大率
         float color[4] = { 1, 1, 1, 1 };// 物体の色
     };
+
+    // カメラオブジェクト
+    GameObject camera;
+
     GameObject box0;
     box0.scale = { 0.2f,0.2f,0.2f };
     box0.position = { 0.6f,0.6f,-1 };
@@ -474,6 +478,25 @@ int WINAPI WinMain
     {
         // box0を回転
         box0.rotation.y += 0.0001f;
+
+        // glfwGetKey(GLFWウィンドウオブジェクトのアドレス,キー番号);
+        // GLFW_RELEASE : キー入力なし
+        // GLFW_PRESS   : キー入力あり
+        // カメラのX軸移動
+        if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
+          camera.position.x -= 0.0005f;
+        }
+        if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
+          camera.position.x += 0.0005f;
+        }
+    
+        // カメラのY軸回転
+        if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
+          camera.rotation.y -= 0.0005f;
+        }
+        if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {
+          camera.rotation.y += 0.0005f;
+        }
 
         // バックバッファを消去するときに使用する色を指定
         glClearColor
@@ -522,6 +545,22 @@ int WINAPI WinMain
             prog3D,     // プログラムオブジェクトの管理番号
             3,          // 送り先ロケーション番号
             aspectRatio // データのアドレス
+        );
+
+        // カメラパラメータを設定
+        glProgramUniform3fv
+        (
+            prog3D,             // プログラムオブジェクトの管理番号
+            4,                  // 送り先ロケーション番号
+            1,                  // データ数
+            &camera.position.x  // データのアドレス
+        );
+        glProgramUniform2f
+        (
+            prog3D,                     // プログラムオブジェクトの管理番号
+            5,                          // 送り先ロケーション番号
+            sin(-camera.rotation.y),    // データ数
+            cos(-camera.rotation.y)     // データのアドレス
         );
 
         // 変数ユニフォームにデータワット

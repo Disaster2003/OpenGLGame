@@ -22,10 +22,14 @@ layout(location=0) uniform vec3 scale;			// 拡大率
 layout(location=1) uniform vec3 position;		// 位置
 layout(location=2) uniform vec2 sinCosY;		// Y軸回転
 layout(location=3) uniform float aspectRatio;	// アスペクト比
+layout(location=4) uniform vec3 cameraPosition; // カメラの位置
+layout(location=5) uniform vec2 cameraSinCosY;  // カメラのY軸回転
 
 void main()
 {
 	outTexcoord = inTexcoord;
+
+	// ローカル座標系からワールド座標系に変換
 	// スケール
 	vec3 pos = inPosition * scale;
 	
@@ -39,7 +43,15 @@ void main()
 	// 平行移動
 	gl_Position.xyz += position;
 
-	// ワールド座標系からクリップ座標系に変換
+	// ワールド座標系からビュー座標系に変換
+    pos = gl_Position.xyz - cameraPosition;
+    float cameraSinY = cameraSinCosY.x;
+    float cameraCosY = cameraSinCosY.y;
+    gl_Position.x = pos.x * cameraCosY + pos.z * cameraSinY;
+    gl_Position.y = pos.y;
+    gl_Position.z = pos.x * -cameraSinY + pos.z * cameraCosY;
+
+    // ビュー座標系からクリップ座標系に変換
 	gl_Position.x /= aspectRatio;
 
 	// 遠近法を有効にする
