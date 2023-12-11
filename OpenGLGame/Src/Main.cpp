@@ -483,18 +483,34 @@ int WINAPI WinMain
         // GLFW_RELEASE : キー入力なし
         // GLFW_PRESS   : キー入力あり
         // カメラのX軸移動
-        if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
-          camera.position.x -= 0.0005f;
+        if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+        {
+          camera.position.x -= 0.001f;
         }
-        if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
-          camera.position.x += 0.0005f;
+        if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+        {
+          camera.position.x += 0.001f;
+        }
+        if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+        {
+          camera.position.z -= 0.001f;
+        }
+        if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+        {
+          camera.position.z += 0.001f;
         }
     
+        //// マウスの入力を取得する
+        //double mouseX, mouseY;
+        //glfwGetCursorPos(window, &mouseX, &mouseY);
+
         // カメラのY軸回転
-        if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
+        if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
+        {
           camera.rotation.y -= 0.0005f;
         }
-        if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {
+        if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
+        {
           camera.rotation.y += 0.0005f;
         }
 

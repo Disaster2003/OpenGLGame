@@ -737,4 +737,177 @@ Z軸の値(Z座標)を変更しなさい.
 ### 3-1.カメラオブジェクトの作成
 `standard.vert`
 ```diff
+ // プログラムからの入力
+ // uniform変数
+ // ->シェーダプログラムに
+ // C++プログラムから値を渡すための変数
+ layout(location=0) uniform vec3 scale;			// 拡大率
+ layout(location=1) uniform vec3 position;		// 位置
+ layout(location=2) uniform vec2 sinCosY;		// Y軸回転
+ layout(location=3) uniform float aspectRatio;	// アスペクト比
++layout(location=4) uniform vec3 cameraPosition; // カメラの位置
++layout(location=5) uniform vec2 cameraSinCosY;  // カメラのY軸回転
+ 
+ void main()
+ {
+ 	outTexcoord = inTexcoord;
+ 
++	// ローカル座標系からワールド座標系に変換
+ 	// スケール
+ 	vec3 pos = inPosition * scale;
+ 	
+ 	// Y軸回転
+ 	float sinY = sinCosY.x;
+ 	float cosY = sinCosY.y;
+ 	gl_Position.x = pos.x * cosY + pos.z * sinY;
+ 	gl_Position.y = pos.y;
+ 	gl_Position.z = pos.x * -sinY + pos.z * cosY;
+ 	
+ 	// 平行移動
+ 	gl_Position.xyz += position;
+ 
++	// ワールド座標系からビュー座標系に変換
++   pos = gl_Position.xyz - cameraPosition;
++   float cameraSinY = cameraSinCosY.x;
++   float cameraCosY = cameraSinCosY.y;
++   gl_Position.x = pos.x * cameraCosY + pos.z * cameraSinY;
++   gl_Position.y = pos.y;
++   gl_Position.z = pos.x * -cameraSinY + pos.z * cameraCosY;
++   
++   // ビュー座標系からクリップ座標系に変換
+ 	gl_Position.x /= aspectRatio;
+ 
+ 	// 遠近法を有効にする
+ 	gl_Position.zw = -gl_Position.zz;
+ }
+```
+
+`Main.cpp`
+```diff
+ #pragma region 物体のパラメータ
+     class GameObject
+     {
+     public:
+         vec3 position = { 0, 0, 0 };    // 物体の位置
+         vec3 rotation = { 0, 0, 0 };    // 物体の回転角度
+         vec3 scale = { 1,1,1 };         // 物体の拡大率
+         float color[4] = { 1, 1, 1, 1 };// 物体の色
+     };
+ 
++    // カメラオブジェクト
++    GameObject camera;
+ 
+     GameObject box0;
+     box0.scale = { 0.2f,0.2f,0.2f };
+     box0.position = { 0.6f,0.6f,-1 };
+ 
+     GameObject box1;
+     box1.color[1] = 0.5f; // 緑成分の明るさを半分にしてみる
+     box1.scale = { 0.2f, 0.2f, 0.2f };
+     box1.position = { 0, 0, -1 };
+ #pragma endregion
+ 
+ #pragma region テクスチャの作成
+```
+```diff
+ // box0を回転
+ box0.rotation.y += 0.0001f;
+ 
++// glfwGetKey(GLFWウィンドウオブジェクトのアドレス,キー番号);
++// GLFW_RELEASE : キー入力なし
++// GLFW_PRESS   : キー入力あり
++// カメラのX軸移動
++if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
++  camera.position.x -= 0.0005f;
++}
++if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
++  camera.position.x += 0.0005f;
++}
++
++// カメラのY軸回転
++if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
++  camera.rotation.y -= 0.0005f;
++}
++if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {
++  camera.rotation.y += 0.0005f;
++}
+ 
+ // バックバッファを消去するときに使用する色を指定
+ glClearColor
+ (
+```
+```diff
+ glProgramUniform1f
+ (
+     prog3D,     // プログラムオブジェクトの管理番号
+     3,          // 送り先ロケーション番号
+     aspectRatio // データのアドレス
+ );
+ 
++// カメラパラメータを設定
++glProgramUniform3fv
++(
++    prog3D,             // プログラムオブジェクトの管理番号
++    4,                  // 送り先ロケーション番号
++    1,                  // データ数
++    &camera.position.x  // データのアドレス
++);
++glProgramUniform2f
++(
++    prog3D,                     // プログラムオブジェクトの管理番号
++    5,                          // 送り先ロケーション番号
++    sin(-camera.rotation.y),    // データ数
++    cos(-camera.rotation.y)     // データのアドレス
++);
+ 
+ // 変数ユニフォームにデータワット
+ glProgramUniform4fv
+ (
+```
+
+## 課題04
+内容
+
+カメラのX軸移動の下に,
+
+カメラのZ軸移動を行うプログラムを
+
+追加しなさい.
+
+キーで前方( W-Z方向),
+
+Sキーで後方(+Z方向)に移動させること.
+
+`Main.cpp`
+```C++
+// glfwGetKey(GLFWウィンドウオブジェクトのアドレス,キー番号);
+// GLFW_RELEASE : キー入力なし
+// GLFW_PRESS   : キー入力あり
+// カメラのX軸移動
+if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+{
+  camera.position.x -= 0.001f;
+}
+if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+{
+  camera.position.x += 0.001f;
+}
+if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+{
+  camera.position.z -= 0.001f;
+}
+if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+{
+  camera.position.z += 0.001f;
+}
+
+// カメラのY軸回転
+if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
+{
+  camera.rotation.y -= 0.0005f;
+}
+if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
+{
+  camera.rotation.y += 0.0005f;
+}
 ```
