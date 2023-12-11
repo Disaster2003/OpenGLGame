@@ -911,3 +911,5 @@ if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
   camera.rotation.y += 0.0005f;
 }
 ```
+
+### 3-2.立方体の定義

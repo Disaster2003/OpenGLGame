@@ -322,10 +322,17 @@ int WINAPI WinMain
     };
     const Vertex vertexData[] =
     {
-        { {-1,-1, 0 }, { 0, 0 } },
-        { { 1,-1, 0 }, { 1, 0 } },
-        { { 1, 1, 0 }, { 1, 1 } },
-        { {-1, 1, 0 }, { 0, 1 } },
+        // +Z(手前の面)
+        { {-1,-1, 1 }, { 0, 0 } },
+        { { 1,-1, 1 }, { 1, 0 } },
+        { { 1, 1, 1 }, { 1, 1 } },
+        { {-1, 1, 1 }, { 0, 1 } },
+
+        // -Z(奥の面)
+        { { 1,-1,-1 }, { 0, 0 } },
+        { {-1,-1,-1 }, { 1, 0 } },
+        { {-1, 1,-1 }, { 1, 1 } },
+        { { 1, 1,-1 }, { 0, 1 } },
     };
     GLuint vbo = 0; // 頂点バッファの管理番号
     // バッファオブジェクト(GPUメモリを管理するためのオブジェクト)の作成
@@ -351,6 +358,7 @@ int WINAPI WinMain
     const GLushort indexData[] =
     {
         0, 1, 2, 2, 3, 0,
+        4, 5, 6, 6, 7, 4,
     };
     GLuint ibo = 0; // インデックスバッファの管理番号
     // バッファオブジェクト(GPUメモリを管理するためのオブジェクト)の作成
@@ -619,10 +627,11 @@ int WINAPI WinMain
         );
 
         // 図形を描画
+        const GLsizei indexCount = std::size(indexData);    // インデックス数
         glDrawElementsInstanced
         (
             GL_TRIANGLES,       // 基本図形の種類
-            6,                  // インデックスデータ数
+            indexCount,         // インデックスデータ数
             GL_UNSIGNED_SHORT,  // インデックスデータの型
             0,                  // インデックスデータの開始位置
             1                   // 描画する図形の数
@@ -660,7 +669,7 @@ int WINAPI WinMain
         glDrawElementsInstanced
         (
             GL_TRIANGLES,       // 基本図形の種類
-            6,                  // インデックスデータ数
+            indexCount,         // インデックスデータ数
             GL_UNSIGNED_SHORT,  // インデックスデータの型
             0,                  // インデックスデータの開始位置
             1                   // 描画する図形の数
