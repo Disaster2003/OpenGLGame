@@ -207,6 +207,8 @@
 ## 課題01
 内容
 
+Main.cppの
+
 頂点バッファのvbo,ibo,vao
 
 テクスチャのtexを
@@ -337,13 +339,38 @@
 +#endif // !GAMEOBJECT_H_INCLUDED
 ```
 
-`Main.cpp`
+`Engine.h`
 ```diff
  /**
- * @file Main.cpp
+ * @file Engine.h
  */
- #include "glad/glad.h"  // GLADライブラリの関数が定義されているヘッダファイル
-+#include "Engine/GameObject.h"
- #include "Engine/Engine.h"
- #include <GLFW/glfw3.h> // GLFWライブラリの関数が定義されているヘッダファイル
+ #ifndef ENGINE_H_INCLUDED	// インクルードガード
+ #define ENGINE_H_INCLUDED	// インクルードガード
+ #include "glad/glad.h"
++#include "GameObject.h"
+ #include <GLFW/glfw3.h>
+ #include <string>
 ```
+
+## 課題02
+内容
+
+Main.cppの
+
+camera,box0,box1を
+
+メンバ変数にしなさい
+
+`Engine.h`
+```C++
+	GLuint tex = 0;							// テクスチャ
+
+	GameObject camera;						// カメラオブジェクト
+	GameObject box0;
+	GameObject box1;
+};
+
+#endif						// !ENGINE_H_INCLUDED(インクルードガード)
+```
+
+### 1-4.Run関数を3つのパートに分割

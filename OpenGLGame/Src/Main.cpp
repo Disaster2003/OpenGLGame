@@ -2,7 +2,6 @@
 * @file Main.cpp
 */
 #include "glad/glad.h"  // GLADライブラリの関数が定義されているヘッダファイル
-#include "Engine/GameObject.h"
 #include "Engine/Engine.h"
 #include <GLFW/glfw3.h> // GLFWライブラリの関数が定義されているヘッダファイル
 
@@ -490,15 +489,10 @@ int Engine::Run()
     );
 #pragma endregion
 
-#pragma region 物体のパラメータ
-    // カメラオブジェクト
-    GameObject camera;
-
-    GameObject box0;
+#pragma region boxのパラメータ
     box0.scale = { 0.2f,0.2f,0.2f };
     box0.position = { 0.6f,0.6f,-1 };
 
-    GameObject box1;
     box1.color[1] = 0.5f; // 緑成分の明るさを半分にしてみる
     box1.scale = { 0.2f, 0.2f, 0.2f };
     box1.position = { 0, 0, -1 };
