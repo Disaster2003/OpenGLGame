@@ -2,6 +2,7 @@
 * @file Main.cpp
 */
 #include "glad/glad.h"  // GLADライブラリの関数が定義されているヘッダファイル
+#include "Engine/Engine.h"
 #include <GLFW/glfw3.h> // GLFWライブラリの関数が定義されているヘッダファイル
 
 #pragma warning(push)
@@ -218,6 +219,18 @@ int WINAPI WinMain
     _In_ LPSTR lpCmdLine,
     _In_ int nShowCmd
 )
+{
+    Engine engine;
+    return engine.Run();
+}
+
+/**
+* ゲームエンジンを実行する
+*
+* @retval 0     正常に実行が完了した
+* @retval 0以外 エラーが発生した
+*/
+int Engine::Run()
 {
 #pragma region GLFWライブラリの初期化
     // 初期化に成功しなかった(!GLFW_TRUE)時,
