@@ -20,13 +20,13 @@ public:
 private:
 	GLFWwindow* window = nullptr;           // ウィンドウオブジェクト
 	const std::string title = "OpenGLGame"; // ウィンドウタイトル
-	GLuint vs = 0;		// 頂点シェーダの管理番号
-	GLuint fs = 0;		// フラグメントシェーダの管理番号
-	GLuint prog3D = 0;	// シェーダプログラムの管理番号
-	GLuint vbo = 0;		// 頂点バッファの管理番号
-	GLuint ibo = 0; // インデックスバッファの管理番号
-	GLuint vao = 0; // 頂点属性配列の管理番号
-	GLuint tex = 0;
+	GLuint vs = 0;							// 頂点シェーダの管理番号
+	GLuint fs = 0;							// フラグメントシェーダの管理番号
+	GLuint prog3D = 0;						// シェーダプログラムの管理番号
+	GLuint vbo = 0;							// 頂点バッファの管理番号
+	GLuint ibo = 0;							// インデックスバッファの管理番号
+	GLuint vao = 0;							// 頂点属性配列の管理番号
+	GLuint tex = 0;							// テクスチャ
 };
 
-#endif	// ENGINE_H_INCLUDED(インクルードガード)
+#endif						// ENGINE_H_INCLUDED(インクルードガード)

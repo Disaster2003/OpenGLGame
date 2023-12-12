@@ -19,6 +19,7 @@
 >* ゲーム固有の要素<br>
 (プレイヤーの操作方法、敵の行動、ゲームルールの管理など)
 
+### 1-1.WinMain() -> Engine.Run()への移行
 `Engienの要素分解`
 >* ゲームループの制御
 >* OpenGLの制御
@@ -131,6 +132,7 @@
 +#include "Engine.h"
 ```
 
+### 1-2.ローカル変数 -> メンバ変数
 `Runメンバ関数内のプログラムを3つに分解`
 >* 初期化
 >* 更新
@@ -153,3 +155,91 @@
 >* OpenGLのオブジェクト管理番号<br>
 (`vs`,`fs`,`prog3D`,`vbo`,`ibo`,`vao`)
 
+`Main.cpp`
+```diff
+ #pragma region 描画ウィンドウの作成
+-    GLFWwindow* window = nullptr;           // ウィンドウオブジェクト
+-    const std::string title = "OpenGLGame"; // ウィンドウタイトル
+     // GLFWライブラリを使ってコンテキストの種類の設定
+     // GLFW_TRUE : デバッグコンテキストの作成
+     // GLFW_FALSE : 通常のコンテキストの作成
+     glfwWindowHint
+     (
+```
+```diff
+ #pragma region シェーダのコンパイルとリンク
+     // シェーダを読み込んでコンパイル
++    vs = 
+         CompileShader
+         (
+             GL_VERTEX_SHADER,
+             "Res/standard.vert"
+         );
++    fs = 
+         CompileShader
+         (
+             GL_FRAGMENT_SHADER,
+             "Res/standard.frag"
+         );
+ 
+     // プログラムオブジェクトの作成
++    prog3D = glCreateProgram();
+     // 頂点シェーダの指定
+     glAttachShader
+     (
+```
+```diff
+     // -X(左の面)
+     { {-1, 1, 1 }, { 0, 0 } },
+     { {-1, 1,-1 }, { 1, 0 } },
+     { {-1,-1,-1 }, { 1, 1 } },
+     { {-1,-1, 1 }, { 0, 1 } },
+ };
+-GLuint vbo = 0; // 頂点バッファの管理番号
+ // バッファオブジェクト(GPUメモリを管理するためのオブジェクト)の作成
+ glCreateBuffers
+ (
+```
+```diff
+     20,21,22,22,23,20,
+ };
+-GLuint ibo = 0; // インデックスバッファの管理番号
+ // バッファオブジェクト(GPUメモリを管理するためのオブジェクト)の作成
+ glCreateBuffers
+ (
+```
+```diff
+ #pragma region 頂点データ形式の設定
+-    GLuint vao = 0; // 頂点属性配列の管理番号
+     // 頂点属性オブジェクトの作成
+     glCreateVertexArrays
+     (
+```
+```diff
+ #pragma endregion
+ 
+ #pragma region テクスチャの作成
++    tex = LoadTexture("Res/box.tga");
+ #pragma endregion
+ 
+ #pragma region メインループの定義
+```
+
+`Engine.h`
+```diff
+ 	int Run();
+ 
+ private:
++	GLFWwindow* window = nullptr;           // ウィンドウオブジェクト
++	const std::string title = "OpenGLGame"; // ウィンドウタイトル
++	GLuint vs = 0;							// 頂点シェーダの管理番号
++	GLuint fs = 0;							// フラグメントシェーダの管理番号
++	GLuint prog3D = 0;						// シェーダプログラムの管理番号
++	GLuint vbo = 0;							// 頂点バッファの管理番号
++	GLuint ibo = 0;							// インデックスバッファの管理番号
++	GLuint vao = 0;							// 頂点属性配列の管理番号
++	GLuint tex = 0;							// テクスチャ
+ };
+ 
+ #endif						// ENGINE_H_INCLUDED(インクルードガード)
+```
