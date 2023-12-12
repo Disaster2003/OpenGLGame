@@ -549,28 +549,22 @@ int WINAPI WinMain
         }
 
         //// マウスの入力の取得
-        //double mouseX, mouseY;
+        //double mouseX, mouseY, mouseBeforeX, mouseBeforeY;
+        //mouseBeforeX = mouseX;
+        //mouseBeforeY = mouseY;
         //glfwGetCursorPos
         //(
         //  window,
         //  &mouseX,
         //  &mouseY
         // );
-        //if (mouseX)
+        //if (mouseBeforeX != mouseX)
         //{
-        //  camera.rotation.y -= 0.0005f;
+        //    camera.rotation.y += 0.0005f * mouseX - mouseBeforeX;
         //}
-        //if (mouseX)
+        //if (mouseBeforeY != mouseY)
         //{
-        //  camera.rotation.y += 0.0005f;
-        //}
-        //if (mouseY)
-        //{
-        //  camera.rotation.x += 0.0005f;
-        //}
-        //if (mouseY)
-        //{
-        //  camera.rotation.x -= 0.0005f;
+        //    camera.rotation.x += 0.0005f * mouseY - mouseBeforeY;
         //}
 
         // カメラの回転
