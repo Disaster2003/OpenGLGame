@@ -86,4 +86,47 @@
 +#endif	// ENGINE_H_INCLUDED(インクルードガード)
 ```
 
+`Main.cpp`
+```diff
+ /**
+ * @file Main.cpp
+ */
+ #include "glad/glad.h"  // GLADライブラリの関数が定義されているヘッダファイル
++#include "Engine/Engine.h"
+ #include <GLFW/glfw3.h> // GLFWライブラリの関数が定義されているヘッダファイル
+ 
+ #pragma warning(push)
+```
+```diff
+ /// <summary>
+ /// エントリーポイント
+ /// </summary>
+ int WINAPI WinMain
+ (
+     _In_ HINSTANCE hInstnce,
+     _In_opt_ HINSTANCE hPrevInstance,
+     _In_ LPSTR lpCmdLine,
+     _In_ int nShowCmd
+ )
+ {
++    Engine engine;
++    return engine.Run();
++}
++
++/// <summary>
++/// ゲームエンジンを実行する
++/// </summary>
++/// <returns>0 : 正常に実行が完了,
++/// 0以外 : エラーが発生</returns>
++int Engine::Run()
++{
+ #pragma region GLFWライブラリの初期化
+```
+
 `Engine.cpp`
+```diff
++/**
++* @file Engine.cpp
++*/
++#include "Engine.h"
+```
