@@ -556,19 +556,19 @@ int WINAPI WinMain
         //  &mouseX,
         //  &mouseY
         // );
-        //if ()
+        //if (mouseX)
         //{
         //  camera.rotation.y -= 0.0005f;
         //}
-        //if ()
+        //if (mouseX)
         //{
         //  camera.rotation.y += 0.0005f;
         //}
-        //if ()
+        //if (mouseY)
         //{
         //  camera.rotation.x += 0.0005f;
         //}
-        //if ()
+        //if (mouseY)
         //{
         //  camera.rotation.x -= 0.0005f;
         //}
