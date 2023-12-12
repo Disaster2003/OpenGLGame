@@ -560,7 +560,7 @@ int WINAPI WinMain
         //  camera.rotation.y += 0.0005f;
         //}
 
-        // カメラのY軸回転
+        // カメラの回転
         if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
         {
           camera.rotation.y -= 0.0005f;
@@ -569,6 +569,14 @@ int WINAPI WinMain
         {
           camera.rotation.y += 0.0005f;
         }
+        //if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
+        //{
+        //  camera.rotation.x += 0.0005f;
+        //}
+        //if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
+        //{
+        //  camera.rotation.x -= 0.0005f;
+        //}
 
         // バックバッファを消去するときに使用する色の指定
         glClearColor

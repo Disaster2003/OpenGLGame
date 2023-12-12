@@ -42,17 +42,31 @@ void main()
 	gl_Position.x = pos.x * cosY + pos.z * sinY;
 	gl_Position.y = pos.y;
 	gl_Position.z = pos.x * -sinY + pos.z * cosY;
+
+	//// X軸回転
+	//v.zy=vec2(v.z*sinCosX.y+v.y*sinCosX.x,-v.z*sinCosX.x+v.y*sinCosX.y);
 	
 	// 平行移動
 	gl_Position.xyz += position;
 
 	// ワールド座標系からビュー座標系に変換
+	// x=x*cos+z*sin
+	// z=x*-sin+z*cos
     pos = gl_Position.xyz - cameraPosition;
     float cameraSinY = cameraSinCosY.x;
     float cameraCosY = cameraSinCosY.y;
     gl_Position.x = pos.x * cameraCosY + pos.z * cameraSinY;
     gl_Position.y = pos.y;
     gl_Position.z = pos.x * -cameraSinY + pos.z * cameraCosY;
+
+	//// y=z*-sin+y*cos
+	//// z=z*cos+y*sin
+	//pos=gl_Position.xyz;
+	//float cameraSinX=cameraSinCosX.x;
+	//float cameraCosX=cameraSinCosX.y;
+	//gl_Position.x=pos.x;
+	//gl_Position.y=pos.y*cameraCosX+pos.z*-cameraSinX;
+	//gl_Position.z=pos.z*cameraCosX+pos.y*cameraSinX;
 
     // ビュー座標系からクリップ座標系に変換
 	gl_Position.xy *= aspectRatioAndScaleFov;
