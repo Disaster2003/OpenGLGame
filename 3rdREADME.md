@@ -1220,3 +1220,48 @@ vertexDataとindexDataに
  // 深度値の計算結果が-1～+1になるようなパラメータA, Bを計算
  const float near = 0.5;
 ```
+
+### 3-7.カメラの向き = 移動する方向
+`Main.cpp`
+```diff
+ // box0の回転
+ box0.rotation.y += 0.0001f;
+ 
+ // glfwGetKey(GLFWウィンドウオブジェクトのアドレス,キー番号);
+ // GLFW_RELEASE : キー入力なし
+ // GLFW_PRESS   : キー入力あり
++// カメラの移動
++const float cameraSpeed = 0.0005f;
++const float cameraCos = cos(camera.rotation.y);
++const float cameraSin = sin(camera.rotation.y);
++if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
++{
++    camera.position.x -= cameraSpeed * cameraCos;
++    camera.position.z -= cameraSpeed * -cameraSin;
++}
++if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
++{
++    camera.position.x += cameraSpeed * cameraCos;
++    camera.position.z += cameraSpeed * -cameraSin;
++}
++if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
++{
++    camera.position.x -= cameraSpeed * cameraSin;
++    camera.position.z -= cameraSpeed * cameraCos;
++}
++if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
++{
++    camera.position.x += cameraSpeed * cameraSin;
++    camera.position.z += cameraSpeed * cameraCos;
++}
+ 
+ // カメラのY軸回転
+ if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
+ {
+   camera.rotation.y -= 0.0005f;
+ }
+ if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
+ {
+   camera.rotation.y += 0.0005f;
+ }
+```
