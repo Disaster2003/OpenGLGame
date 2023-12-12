@@ -1194,3 +1194,29 @@ vertexDataとindexDataに
 ```
 
 ### 3-6.除算をシェーダー->CPU側に
+`Main.cpp`
+```diff
+ const float scaleFov = tan(radFovY / 2); // 視野角による拡大率
+ glProgramUniform2f
+ (
+     prog3D,                         // プログラムオブジェクトの管理番号
+     3,                              // 送り先ロケーション番号
++    1 / (aspectRatio * scaleFov),   // データ数
++    1 / scaleFov                    // データのアドレス
+ );
+ 
+ // カメラパラメータの設定
+ glProgramUniform3fv
+ (
+```
+
+`standard.vert`
+```diff
+ gl_Position.z = pos.x * -cameraSinY + pos.z * cameraCosY;
+ 
+ // ビュー座標系からクリップ座標系に変換
++gl_Position.xy *= aspectRatioAndScaleFov;
+ 
+ // 深度値の計算結果が-1～+1になるようなパラメータA, Bを計算
+ const float near = 0.5;
+```
