@@ -21,7 +21,10 @@ layout(location=1) out vec2 outTexcoord;    // テクスチャ座標
 layout(location=0) uniform vec3 scale;			// 拡大率
 layout(location=1) uniform vec3 position;		// 位置
 layout(location=2) uniform vec2 sinCosY;		// Y軸回転
-layout(location=3) uniform float aspectRatio;	// アスペクト比
+
+// アスペクト比と視野角による拡大率
+layout(location=3) uniform vec2 aspectRatioAndScaleFov;
+
 layout(location=4) uniform vec3 cameraPosition; // カメラの位置
 layout(location=5) uniform vec2 cameraSinCosY;  // カメラのY軸回転
 
@@ -52,7 +55,12 @@ void main()
     gl_Position.z = pos.x * -cameraSinY + pos.z * cameraCosY;
 
     // ビュー座標系からクリップ座標系に変換
+	const float aspectRatio = aspectRatioAndScaleFov.x;
 	gl_Position.x /= aspectRatio;
+
+	// 視野角を反映
+	const float scaleFov = aspectRatioAndScaleFov.y;
+	gl_Position.xy /= scaleFov;
 
 	// 深度値の計算結果が-1～+1になるようなパラメータA, Bを計算
 	const float near = 0.5;
@@ -60,7 +68,7 @@ void main()
 	const float A = -2 * far * near / (far - near);
 	const float B = (far + near) / (far - near);
 
-	// 遠近法を有効にする
+	// 遠近法の有効化
 	gl_Position.w = -gl_Position.z;
-	gl_Position.z = -gl_Position.z * B + A; // 深度値を補正
+	gl_Position.z = -gl_Position.z * B + A; // 深度値の補正
 }

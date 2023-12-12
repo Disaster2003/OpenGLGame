@@ -120,7 +120,7 @@ GLuint CompileShader
 }
 
 /// <summary>
-/// テクスチャを読み込む
+/// テクスチャの読み込み
 /// </summary>
 /// <param name="filename">テクスチャファイル名</param>
 /// <returns>テクスチャの管理番号</returns>
@@ -437,11 +437,11 @@ int WINAPI WinMain
         vbo               // 割り当てる頂点バッファ管理番号
     );
 
-    // 0番目の頂点属性を有効化
+    // 0番目の頂点属性の有効化
     // 引数 : 有効にする頂点属性配列のインデックス
     glEnableVertexAttribArray(0);
 
-    // 0番目の頂点属性を設定
+    // 0番目の頂点属性の設定
     // このとき,OpenGLコンテキストにバインドされているVBOが,
     // 頂点属性にバインドされる
     glVertexAttribPointer
@@ -454,11 +454,11 @@ int WINAPI WinMain
         0               // 最初のデータの位置
     );
 
-    // 1番目の頂点属性を有効化
+    // 1番目の頂点属性の有効化
     // 引数 : 有効にする頂点属性配列のインデックス
     glEnableVertexAttribArray(1);
 
-    // 1番目の頂点属性を設定
+    // 1番目の頂点属性の設定
     glVertexAttribPointer
     (
         1,                              // 頂点属性配列のインデックス
@@ -512,7 +512,7 @@ int WINAPI WinMain
     // 引数 : GLFWwindowへのポインタ
     while (!glfwWindowShouldClose(window))
     {
-        // box0を回転
+        // box0の回転
         box0.rotation.y += 0.0001f;
 
         // glfwGetKey(GLFWウィンドウオブジェクトのアドレス,キー番号);
@@ -536,7 +536,7 @@ int WINAPI WinMain
           camera.position.z += 0.001f;
         }
     
-        //// マウスの入力を取得する
+        //// マウスの入力の取得
         //double mouseX, mouseY;
         //glfwGetCursorPos(window, &mouseX, &mouseY);
         //if ()
@@ -558,7 +558,7 @@ int WINAPI WinMain
           camera.rotation.y += 0.0005f;
         }
 
-        // バックバッファを消去するときに使用する色を指定
+        // バックバッファを消去するときに使用する色の指定
         glClearColor
         (
             0.3f,   // R(赤)
@@ -566,7 +566,7 @@ int WINAPI WinMain
             0.9f,   // B(青)
             1.0f    // A(透明度)
         );
-        // バックバッファをクリア
+        // バックバッファのクリア
         // GL_COLOR_BUFFER_BIT : カラーバッファ(色)
         // GL_DEPTH_BUFFER_BIT : 深度バッファ(奥行き)
         // GL_STENCIL_BUFFER_BIT : ステンシルバッファ(切り抜き)
@@ -576,7 +576,7 @@ int WINAPI WinMain
         // 引数 : 割り当てる頂点属性配列の管理番号
         glBindVertexArray(vao);
 
-        // 描画に使うシェーダを指定
+        // 描画に使うシェーダの指定
         glUseProgram(prog3D);
 
         // フレームバッファの大きさを取得
@@ -588,7 +588,7 @@ int WINAPI WinMain
             &fbHeight   // 描画ウィンドウの高さを格納する変数のアドレス
         );
 
-        // ビューポートを設定
+        // ビューポートの設定
         glViewport
         (
             0,          // 描画範囲の左下Xの座標
@@ -597,17 +597,21 @@ int WINAPI WinMain
             fbHeight    // 描画範囲の高さ
         );
     
-        // アスペクト比を設定
+        // アスペクト比と視野角の設定
         const float aspectRatio =
           static_cast<float>(fbWidth) / static_cast<float>(fbHeight);
-        glProgramUniform1f
+        const float degFovY = 60; // 垂直視野角
+        const float radFovY = degFovY * 3.1415926535f / 180;
+        const float scaleFov = tan(radFovY / 2); // 視野角による拡大率
+        glProgramUniform2f
         (
             prog3D,     // プログラムオブジェクトの管理番号
             3,          // 送り先ロケーション番号
-            aspectRatio // データのアドレス
+            aspectRatio,// データ数
+            scaleFov    // データのアドレス
         );
 
-        // カメラパラメータを設定
+        // カメラパラメータの設定
         glProgramUniform3fv
         (
             prog3D,             // プログラムオブジェクトの管理番号
@@ -668,7 +672,7 @@ int WINAPI WinMain
             &tex    // テクスチャ管理番号配列のアドレス
         );
 
-        // 図形を描画
+        // 図形の描画
         const GLsizei indexCount = std::size(indexData);    // インデックス数
         glDrawElementsInstanced
         (
@@ -679,7 +683,7 @@ int WINAPI WinMain
             1                   // 描画する図形の数
         );
 
-        // ふたつめの図形を描画
+        // ふたつめの図形の描画
         glProgramUniform4fv
         (
             prog3D,     // プログラムオブジェクトの管理番号

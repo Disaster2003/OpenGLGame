@@ -28,7 +28,7 @@
 
 `Main.cpp`
 ```diff
-     // 1番目の頂点属性を設定
+     // 1番目の頂点属性の設定
      glVertexAttribPointer
      (
          1,                              // 頂点属性配列のインデックス
@@ -94,7 +94,7 @@
 
 `Main.cpp`
 ```C++
-     // 1番目の頂点属性を設定
+     // 1番目の頂点属性の設定
      glVertexAttribPointer
      (
          1,                              // 頂点属性配列のインデックス
@@ -157,7 +157,7 @@
 
 `Main.cpp`
 ```diff
-     // 1番目の頂点属性を設定
+     // 1番目の頂点属性の設定
      glVertexAttribPointer
      (
          1,                              // 頂点属性配列のインデックス
@@ -222,7 +222,7 @@
 
 画面の好きな位置に表示しなさい.
 ```C++
-     // 1番目の頂点属性を設定
+     // 1番目の頂点属性の設定
      glVertexAttribPointer
      (
          1,                              // 頂点属性配列のインデックス
@@ -283,7 +283,7 @@
  #pragma region テクスチャの作成
 ```
 ```diff
- // 図形を描画
+ // 図形の描画
  glDrawElementsInstanced
  (
      GL_TRIANGLES,       // 基本図形の種類
@@ -293,7 +293,7 @@
      1                   // 描画する図形の数
  );
  
-+// ふたつめの図形を描画
++// ふたつめの図形の描画
 +glProgramUniform4fv
 +(
 +    prog3D,     // プログラムオブジェクトの管理番号
@@ -431,7 +431,7 @@ GLSLの「スウィズリング(swizzling)」
  // 引数 : GLFWwindowへのポインタ
  while (!glfwWindowShouldClose(window))
  {
-+    // box0を回転
++    // box0の回転
 +    box0.rotation.y += 0.0001f;
  
      // バックバッファを消去するときに使用する色を指定
@@ -518,7 +518,7 @@ GLSLの「スウィズリング(swizzling)」
  	// 平行移動
  	gl_Position.xyz += position;
  
-+	// 遠近法を有効にする
++	// 遠近法の有効化
 +	gl_Position.zw = -gl_Position.zz;
  }
 ```
@@ -584,13 +584,13 @@ Z軸の値(Z座標)を変更しなさい.
 +// ワールド座標系からクリップ座標系に変換
 +gl_Position.x /= aspectRatio;
  
- // 遠近法を有効にする
+ // 遠近法の有効化
  gl_Position.zw = -gl_Position.zz;
 ```
 
 `Main.cpp`
 ```diff
- // 描画に使うシェーダを指定
+ // 描画に使うシェーダの指定
  glUseProgram(prog3D);
 
 +// フレームバッファの大きさを取得
@@ -602,7 +602,7 @@ Z軸の値(Z座標)を変更しなさい.
 +    &fbHeight   // 描画ウィンドウの高さを格納する変数のアドレス
 +);
 +
-+// アスペクト比を設定
++// アスペクト比の設定
 +const float aspectRatio =
 +  static_cast<float>(fbWidth) / static_cast<float>(fbHeight);
 +glProgramUniform1f
@@ -628,7 +628,7 @@ Z軸の値(Z座標)を変更しなさい.
      &fbHeight   // 描画ウィンドウの高さを格納する変数のアドレス
  );
 
-+// ビューポートを設定
++// ビューポートの設定
 +glViewport
 +(
 +    0,          // 描画範囲の左下Xの座標
@@ -637,7 +637,7 @@ Z軸の値(Z座標)を変更しなさい.
 +    fbHeight    // 描画範囲の高さ
 +);
  
- // アスペクト比を設定
+ // アスペクト比の設定
  const float aspectRatio =
    static_cast<float>(fbWidth) / static_cast<float>(fbHeight);
  glProgramUniform1f
@@ -777,7 +777,7 @@ Z軸の値(Z座標)を変更しなさい.
 +   // ビュー座標系からクリップ座標系に変換
  	gl_Position.x /= aspectRatio;
  
- 	// 遠近法を有効にする
+ 	// 遠近法の有効化
  	gl_Position.zw = -gl_Position.zz;
  }
 ```
@@ -810,7 +810,7 @@ Z軸の値(Z座標)を変更しなさい.
  #pragma region テクスチャの作成
 ```
 ```diff
- // box0を回転
+ // box0の回転
  box0.rotation.y += 0.0001f;
  
 +// glfwGetKey(GLFWウィンドウオブジェクトのアドレス,キー番号);
@@ -844,7 +844,7 @@ Z軸の値(Z座標)を変更しなさい.
      aspectRatio // データのアドレス
  );
  
-+// カメラパラメータを設定
++// カメラパラメータの設定
 +glProgramUniform3fv
 +(
 +    prog3D,             // プログラムオブジェクトの管理番号
@@ -954,7 +954,7 @@ if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
      &tex    // テクスチャ管理番号配列のアドレス
  );
 
- // 図形を描画
+ // 図形の描画
 +const GLsizei indexCount = std::size(indexData);    // インデックス数
  glDrawElementsInstanced
  (
@@ -965,7 +965,7 @@ if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
      1                   // 描画する図形の数
  );
 
- // ふたつめの図形を描画
+ // ふたつめの図形の描画
  glProgramUniform4fv
  (
 ```
@@ -986,7 +986,7 @@ if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
      1                   // 描画する図形の数
  );
  
- // VAOの割り当てを解除
+ // VAOの割り当ての解除
  // 引数 : 割り当てる頂点属性配列の管理番号
  glBindVertexArray(0);
 ```
@@ -1040,9 +1040,9 @@ if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
 +	const float A = -2 * far * near / (far - near);
 +	const float B = (far + near) / (far - near);
 +
-+	// 遠近法を有効にする
++	// 遠近法の有効化
 +	gl_Position.w = -gl_Position.z;
-+	gl_Position.z = -gl_Position.z * B + A; // 深度値を補正
++	gl_Position.z = -gl_Position.z * B + A; // 深度値の補正
  }
 ```
 
@@ -1131,3 +1131,4 @@ vertexDataとindexDataに
     GLuint ibo = 0; // インデックスバッファの管理番号
 ```
 
+### 3-5.視野角の設定
