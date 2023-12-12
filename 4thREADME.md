@@ -243,3 +243,5 @@
  
  #endif						// ENGINE_H_INCLUDED(インクルードガード)
 ```
+
+### 1-3.GameObjectクラスの独立化
