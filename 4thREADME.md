@@ -391,3 +391,122 @@ camera,box0,box1を
 ```
 
 ### 1-4.Run関数を3つのパートに分割
+`Engine.h`
+```diff
+ 	int Run();
+ 
+ private:
++	int Initialize();
++	void Update();
++	void Render();
+ 
+ 	GLFWwindow* window = nullptr;           // ウィンドウオブジェクト
+```
+```diff
+ 	GameObject box1;
++	GLsizei indexCount = 0;
+ };
+ 
+ #endif						// !ENGINE_H_INCLUDED(インクルードガード)
+```
+
+`Main.cpp`
+```diff
+ /// <summary>
+ /// ゲームエンジンを実行する
+ /// </summary>
+ /// <returns>0 : 正常に実行が完了,
+ /// 0以外 : エラーが発生</returns>
+ int Engine::Run()
+ {
++    const int result = Initialize();
++    if (result)
++    {
++        return result;
++    }
++    // ウィンドウの終了要求が来ていなかった(0)時,
++    // メインループ処理を続ける
++    // 引数 : GLFWwindowへのポインタ
++    while (!glfwWindowShouldClose(window))
++    {
++        Update();
++        Render();
++    }
++    // GLFWライブラリの終了
++    glfwTerminate();
++    return 0;
++}
++
++/// <summary>
++/// ゲームエンジンの初期化
++/// </summary>
++/// <returns>0 : 正常に初期化,
++/// 0以外 : エラーが発生した</returns>
++int Engine::Initialize()
++{
+ #pragma region GLFWライブラリの初期化
+     // 初期化に成功しなかった(!GLFW_TRUE)時,
+     // 1を返して終了
+     if (glfwInit() != GLFW_TRUE)
+     {
+```
+```diff
+     20,21,22,22,23,20,
+ };
++indexCount = static_cast<GLsizei>(std::size(indexData));  // インデックス数
+ // バッファオブジェクト(GPUメモリを管理するためのオブジェクト)の作成
+ glCreateBuffers
+ (
+```
+```diff
+     tex = LoadTexture("Res/box.tga");
+ #pragma endregion
+ 
++    return 0; // 正常に初期化された
++}
++
++/// <summary>
++/// ゲームエンジンの状態の更新
++/// </summary>
++void Engine::Update()
++{
+     // box0の回転
+     box0.rotation.y += 0.0001f;
+```
+```diff
+         camera.rotation.y += 0.0005f;
+     }
++}
++
++/// <summary>
++/// ゲームエンジンの状態を描画
++/// </summary>
++void Engine::Render()
++{
+         // バックバッファを消去するときに使用する色の指定
+         glClearColor
+         (
+```
+```diff
+     &tex    // テクスチャ管理番号配列のアドレス
+ );
+
+ // 図形の描画
+-const GLsizei indexCount = static_cast<GLsizei>(std::size(indexData));    // インデックス数
+ glDrawElementsInstanced
+ (
+```
+```diff
+         // 「OSからの要求」の処理
+         // (キーボードやマウスなどの状態を取得するなど)
+         glfwPollEvents();
+     }
+-#pragma endregion
+-
+-#pragma region GLFWライブラリの終了
+-    glfwTerminate();
+-#pragma endregion
+-
+-    return 0;
+-}
+```
