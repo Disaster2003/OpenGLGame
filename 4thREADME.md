@@ -390,7 +390,8 @@ camera,box0,box1を
  #endif						// !ENGINE_H_INCLUDED(インクルードガード)
 ```
 
-### 1-4.Run関数を3つのパートに分割
+### 1-4.Run関数を3つのパートに分割後,<br>
+Main.cpp -> Engine.cpp
 `Engine.h`
 ```diff
  	int Run();
