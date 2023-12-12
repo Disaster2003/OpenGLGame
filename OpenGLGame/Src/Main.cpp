@@ -528,7 +528,6 @@ int Engine::Initialize()
     tex = LoadTexture("Res/box.tga");
 #pragma endregion
 
-
     return 0; // ³í‚É‰Šú‰»‚³‚ê‚½
 }
 
