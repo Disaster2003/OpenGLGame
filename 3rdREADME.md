@@ -1132,3 +1132,63 @@ vertexDataとindexDataに
 ```
 
 ### 3-5.視野角の設定
+`standard.vert`
+```diff
+ // プログラムからの入力
+ // uniform変数
+ // ->シェーダプログラムに
+ // C++プログラムから値を渡すための変数
+ layout(location=0) uniform vec3 scale;			// 拡大率
+ layout(location=1) uniform vec3 position;		// 位置
+ layout(location=2) uniform vec2 sinCosY;		// Y軸回転
+ 
++// アスペクト比と視野角による拡大率
++layout(location=3) uniform vec2 aspectRatioAndScaleFov;
+ 
+ layout(location=4) uniform vec3 cameraPosition; // カメラの位置
+ layout(location=5) uniform vec2 cameraSinCosY;  // カメラのY軸回転
+ 
+ void main()
+ {
+```
+```diff
+ // ビュー座標系からクリップ座標系に変換
++const float aspectRatio = aspectRatioAndScaleFov.x;
+ gl_Position.x /= aspectRatio;
+ 
++// 視野角を反映
++const float scaleFov = aspectRatioAndScaleFov.y;
++gl_Position.xy /= scaleFov;
+ 
+ // 深度値の計算結果が-1～+1になるようなパラメータA, Bを計算
+```
+
+`Main.cpp`
+```diff
+ // ビューポートの設定
+ glViewport
+ (
+     0,          // 描画範囲の左下Xの座標
+     0,          // 描画範囲の左下のY座標
+     fbWidth,    // 描画範囲の幅
+     fbHeight    // 描画範囲の高さ
+ );
+ 
++// アスペクト比と視野角の設定
++const float aspectRatio =
++  static_cast<float>(fbWidth) / static_cast<float>(fbHeight);
++const float degFovY = 60; // 垂直視野角
++const float radFovY = degFovY * 3.1415926535f / 180;
++const float scaleFov = tan(radFovY / 2); // 視野角による拡大率
++glProgramUniform2f
++(
++    prog3D,     // プログラムオブジェクトの管理番号
++    3,          // 送り先ロケーション番号
++    aspectRatio,// データ数
++    scaleFov    // データのアドレス
++);
+ 
+ // カメラパラメータの設定
+ glProgramUniform3fv
+ (
+```
