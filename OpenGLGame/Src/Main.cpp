@@ -241,8 +241,6 @@ int Engine::Run()
 #pragma endregion
 
 #pragma region 描画ウィンドウの作成
-    GLFWwindow* window = nullptr;           // ウィンドウオブジェクト
-    const std::string title = "OpenGLGame"; // ウィンドウタイトル
     // GLFWライブラリを使ってコンテキストの種類の設定
     // GLFW_TRUE : デバッグコンテキストの作成
     // GLFW_FALSE : 通常のコンテキストの作成
@@ -296,13 +294,13 @@ int Engine::Run()
 
 #pragma region シェーダのコンパイルとリンク
     // シェーダを読み込んでコンパイル
-    const GLuint vs = 
+    vs = 
         CompileShader
         (
             GL_VERTEX_SHADER,
             "Res/standard.vert"
         );
-    const GLuint fs = 
+    fs = 
         CompileShader
         (
             GL_FRAGMENT_SHADER,
@@ -310,7 +308,7 @@ int Engine::Run()
         );
 
     // プログラムオブジェクトの作成
-    GLuint prog3D = glCreateProgram();
+    prog3D = glCreateProgram();
     // 頂点シェーダの指定
     glAttachShader
     (
@@ -375,7 +373,6 @@ int Engine::Run()
         { {-1,-1,-1 }, { 1, 1 } },
         { {-1,-1, 1 }, { 0, 1 } },
     };
-    GLuint vbo = 0; // 頂点バッファの管理番号
     // バッファオブジェクト(GPUメモリを管理するためのオブジェクト)の作成
     glCreateBuffers
     (
@@ -405,7 +402,6 @@ int Engine::Run()
         16, 17,18,18,19, 16,
         20,21,22,22,23,20,
     };
-    GLuint ibo = 0; // インデックスバッファの管理番号
     // バッファオブジェクト(GPUメモリを管理するためのオブジェクト)の作成
     glCreateBuffers
     (
@@ -425,7 +421,6 @@ int Engine::Run()
 #pragma endregion
 
 #pragma region 頂点データ形式の設定
-    GLuint vao = 0; // 頂点属性配列の管理番号
     // 頂点属性オブジェクトの作成
     glCreateVertexArrays
     (
@@ -520,7 +515,7 @@ int Engine::Run()
 #pragma endregion
 
 #pragma region テクスチャの作成
-    GLuint tex = LoadTexture("Res/box.tga");
+    tex = LoadTexture("Res/box.tga");
 #pragma endregion
 
 #pragma region メインループの定義
