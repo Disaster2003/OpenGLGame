@@ -559,6 +559,14 @@ int WINAPI WinMain
         //{
         //  camera.rotation.y += 0.0005f;
         //}
+        //if ()
+        //{
+        //  camera.rotation.x += 0.0005f;
+        //}
+        //if ()
+        //{
+        //  camera.rotation.x -= 0.0005f;
+        //}
 
         // ÉJÉÅÉâÇÃâÒì]
         if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)

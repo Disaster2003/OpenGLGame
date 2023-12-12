@@ -25,6 +25,7 @@
     <None Include="Res\standard.vert" />
     <None Include="Res\standard.frag" />
     <None Include="..\3rdREADME.md" />
+    <None Include="..\4thREADME.md" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\Main.cpp">
