@@ -3,7 +3,12 @@
 */
 #include "glad/glad.h"  // GLADライブラリの関数が定義されているヘッダファイル
 #include <GLFW/glfw3.h> // GLFWライブラリの関数が定義されているヘッダファイル
+
+#pragma warning(push)
+#pragma warning(disable:4005)
 #include <Windows.h>    // ウィンドウズ用の関数が定義されているヘッダファイル
+#pragma warning(pop)
+
 #include <string>       // 文字列型や文字列操作関数などが定義されているヘッダファイル
 #include <vector>       // 動的配列型"vectorクラス"が定義されているヘッダファイル
 #include <fstream>      // ifstreamクラスが定義されているヘッダファイル
@@ -680,7 +685,7 @@ int WINAPI WinMain
         );
 
         // 図形の描画
-        const GLsizei indexCount = std::size(indexData);    // インデックス数
+        const GLsizei indexCount = static_cast<GLsizei>(std::size(indexData));    // インデックス数
         glDrawElementsInstanced
         (
             GL_TRIANGLES,       // 基本図形の種類
