@@ -550,7 +550,12 @@ int WINAPI WinMain
 
         //// ƒ}ƒEƒX‚Ì“ü—Í‚ÌŽæ“¾
         //double mouseX, mouseY;
-        //glfwGetCursorPos(window, &mouseX, &mouseY);
+        //glfwGetCursorPos
+        //(
+        //  window,
+        //  &mouseX,
+        //  &mouseY
+        // );
         //if ()
         //{
         //  camera.rotation.y -= 0.0005f;
