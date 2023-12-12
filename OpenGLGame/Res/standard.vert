@@ -55,12 +55,7 @@ void main()
     gl_Position.z = pos.x * -cameraSinY + pos.z * cameraCosY;
 
     // ビュー座標系からクリップ座標系に変換
-	const float aspectRatio = aspectRatioAndScaleFov.x;
-	gl_Position.x /= aspectRatio;
-
-	// 視野角を反映
-	const float scaleFov = aspectRatioAndScaleFov.y;
-	gl_Position.xy /= scaleFov;
+	gl_Position.xy *= aspectRatioAndScaleFov;
 
 	// 深度値の計算結果が-1～+1になるようなパラメータA, Bを計算
 	const float near = 0.5;

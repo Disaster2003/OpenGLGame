@@ -1192,3 +1192,5 @@ vertexDataとindexDataに
  glProgramUniform3fv
  (
 ```
+
+### 3-6.除算をシェーダー->CPU側に

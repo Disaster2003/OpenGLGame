@@ -605,10 +605,10 @@ int WINAPI WinMain
         const float scaleFov = tan(radFovY / 2); // 視野角による拡大率
         glProgramUniform2f
         (
-            prog3D,     // プログラムオブジェクトの管理番号
-            3,          // 送り先ロケーション番号
-            aspectRatio,// データ数
-            scaleFov    // データのアドレス
+            prog3D,                         // プログラムオブジェクトの管理番号
+            3,                              // 送り先ロケーション番号
+            1 / (aspectRatio * scaleFov),   // データ数
+            1 / scaleFov                    // データのアドレス
         );
 
         // カメラパラメータの設定
