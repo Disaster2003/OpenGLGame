@@ -50,3 +50,40 @@
    +---- テクスチャの追加
    +---- シェーダの追加
 ```
+
+プロジェクトの選択
+
+->ctrl + shift + A
+
+->プロジェクト名\Src\Enigne\Engine.hを入力
+
+->追加をクリック
+
+`Engine.h`
+```diff
++/**
++* @file Engine.h
++*/
++#ifndef ENGINE_H_INCLUDED	// インクルードガード
++#define ENGINE_H_INCLUDED	// インクルードガード
++#include "glad/glad.h"
++#include <GLFW/glfw3.h>
++#include <string>
++
++/// <summary>
++/// ゲームエンジン
++/// </summary>
++class Engine
++{
++public:
++	Engine() = default;
++	~Engine() = default;
++	int Run();
++
++private:
++};
++
++#endif	// ENGINE_H_INCLUDED(インクルードガード)
+```
+
+`Engine.cpp`

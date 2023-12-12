@@ -224,13 +224,6 @@ int WINAPI WinMain
     return engine.Run();
 }
 
-/**
-* ゲームエンジンを実行する
-*
-* @retval 0     正常に実行が完了した
-* @retval 0以外 エラーが発生した
-*/
-
 /// <summary>
 /// ゲームエンジンを実行する
 /// </summary>
