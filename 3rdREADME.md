@@ -990,3 +990,58 @@ if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
  // 引数 : 割り当てる頂点属性配列の管理番号
  glBindVertexArray(0);
 ```
+
+### 3-3.深度テストの有効化
+`Main.cpp`
+```diff
+ glProgramUniform2f
+ (
+     prog3D,                     // プログラムオブジェクトの管理番号
+     5,                          // 送り先ロケーション番号
+     sin(-camera.rotation.y),    // データ数
+     cos(-camera.rotation.y)     // データのアドレス
+ );
+ 
++// 深度テストの有効化
++// glEnable : 指定されたOpenGLコンテキストの有効化
++// 引数 : 有効にする機能を表すマクロ定数
++// GL_DEPTH_TEST : 深度テスト
++glEnable(GL_DEPTH_TEST);
+ 
+ // 変数ユニフォームにデータワット
+ glProgramUniform4fv
+ (
+```
+
+深度テストは「深度バッファの値と,
+
+描画するピクセルの深度値を比較する」
+
+ことで行われる.
+
+そこで,計算結果が深度値によって
+
+異なるように...
+
+`深度値の補正`
+>1. 「奥行き(Z軸)方向の描画範囲」を決める.<br>
+  手前側の境界をnear(ニア)、奥側の境界をfar(ファー)とする.
+>2. 計算結果について,深度値がnearと等しい場合に-1,<br>
+  farと等しい場合に1となるような計算式を求める.
+
+`standard.vert`
+```diff
+     // ビュー座標系からクリップ座標系に変換
+ 	gl_Position.x /= aspectRatio;
+ 
++	// 深度値の計算結果が-1～+1になるようなパラメータA, Bを計算
++	const float near = 0.5;
++	const float far = 1000;
++	const float A = -2 * far * near / (far - near);
++	const float B = (far + near) / (far - near);
++
++	// 遠近法を有効にする
++	gl_Position.w = -gl_Position.z;
++	gl_Position.z = -gl_Position.z * B + A; // 深度値を補正
+ }
+```

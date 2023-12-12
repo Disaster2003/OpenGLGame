@@ -54,6 +54,13 @@ void main()
     // ビュー座標系からクリップ座標系に変換
 	gl_Position.x /= aspectRatio;
 
+	// 深度値の計算結果が-1～+1になるようなパラメータA, Bを計算
+	const float near = 0.5;
+	const float far = 1000;
+	const float A = -2 * far * near / (far - near);
+	const float B = (far + near) / (far - near);
+
 	// 遠近法を有効にする
-	gl_Position.zw = -gl_Position.zz;
+	gl_Position.w = -gl_Position.z;
+	gl_Position.z = -gl_Position.z * B + A; // 深度値を補正
 }

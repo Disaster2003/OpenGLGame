@@ -511,6 +511,14 @@ int WINAPI WinMain
         //// マウスの入力を取得する
         //double mouseX, mouseY;
         //glfwGetCursorPos(window, &mouseX, &mouseY);
+        //if ()
+        //{
+        //  camera.rotation.y -= 0.0005f;
+        //}
+        //if ()
+        //{
+        //  camera.rotation.y += 0.0005f;
+        //}
 
         // カメラのY軸回転
         if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
@@ -586,6 +594,12 @@ int WINAPI WinMain
             sin(-camera.rotation.y),    // データ数
             cos(-camera.rotation.y)     // データのアドレス
         );
+
+        // 深度テストの有効化
+        // glEnable : 指定されたOpenGLコンテキストの有効化
+        // 引数 : 有効にする機能を表すマクロ定数
+        // GL_DEPTH_TEST : 深度テスト
+        glEnable(GL_DEPTH_TEST);
 
         // 変数ユニフォームにデータワット
         glProgramUniform4fv
