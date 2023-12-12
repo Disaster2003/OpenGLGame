@@ -150,6 +150,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Engine\Engine.h" />
+    <ClInclude Include="Src\Engine\GameObject.h" />
+    <ClInclude Include="Src\Engine\VecMath.h" />
     <ClInclude Include="Src\glad\include\glad\glad.h" />
     <ClInclude Include="Src\glad\include\KHR\khrplatform.h" />
   </ItemGroup>

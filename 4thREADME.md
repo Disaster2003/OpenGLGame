@@ -188,42 +188,6 @@
      glAttachShader
      (
 ```
-```diff
-     // -X(左の面)
-     { {-1, 1, 1 }, { 0, 0 } },
-     { {-1, 1,-1 }, { 1, 0 } },
-     { {-1,-1,-1 }, { 1, 1 } },
-     { {-1,-1, 1 }, { 0, 1 } },
- };
--GLuint vbo = 0; // 頂点バッファの管理番号
- // バッファオブジェクト(GPUメモリを管理するためのオブジェクト)の作成
- glCreateBuffers
- (
-```
-```diff
-     20,21,22,22,23,20,
- };
--GLuint ibo = 0; // インデックスバッファの管理番号
- // バッファオブジェクト(GPUメモリを管理するためのオブジェクト)の作成
- glCreateBuffers
- (
-```
-```diff
- #pragma region 頂点データ形式の設定
--    GLuint vao = 0; // 頂点属性配列の管理番号
-     // 頂点属性オブジェクトの作成
-     glCreateVertexArrays
-     (
-```
-```diff
- #pragma endregion
- 
- #pragma region テクスチャの作成
-+    tex = LoadTexture("Res/box.tga");
- #pragma endregion
- 
- #pragma region メインループの定義
-```
 
 `Engine.h`
 ```diff
@@ -235,6 +199,68 @@
 +	GLuint vs = 0;							// 頂点シェーダの管理番号
 +	GLuint fs = 0;							// フラグメントシェーダの管理番号
 +	GLuint prog3D = 0;						// シェーダプログラムの管理番号
+ };
+ 
+ #endif						// ENGINE_H_INCLUDED(インクルードガード)
+```
+
+## 課題01
+内容
+
+頂点バッファのvbo,ibo,vao
+
+テクスチャのtexを
+
+ローカル変数 -> メンバ変数にしなさい.
+
+`Main.cpp`
+```C++
+     // -X(左の面)
+     { {-1, 1, 1 }, { 0, 0 } },
+     { {-1, 1,-1 }, { 1, 0 } },
+     { {-1,-1,-1 }, { 1, 1 } },
+     { {-1,-1, 1 }, { 0, 1 } },
+ };
+-GLuint vbo = 0; // 頂点バッファの管理番号
+ // バッファオブジェクト(GPUメモリを管理するためのオブジェクト)の作成
+ glCreateBuffers
+ (
+```
+```C++
+     20,21,22,22,23,20,
+ };
+-GLuint ibo = 0; // インデックスバッファの管理番号
+ // バッファオブジェクト(GPUメモリを管理するためのオブジェクト)の作成
+ glCreateBuffers
+ (
+```
+```C++
+ #pragma region 頂点データ形式の設定
+-    GLuint vao = 0; // 頂点属性配列の管理番号
+     // 頂点属性オブジェクトの作成
+     glCreateVertexArrays
+     (
+```
+```C++
+ #pragma endregion
+ 
+ #pragma region テクスチャの作成
++    tex = LoadTexture("Res/box.tga");
+ #pragma endregion
+ 
+ #pragma region メインループの定義
+```
+
+`Engine.h`
+```C++
+ 	int Run();
+ 
+ private:
+ 	GLFWwindow* window = nullptr;           // ウィンドウオブジェクト
+ 	const std::string title = "OpenGLGame"; // ウィンドウタイトル
+ 	GLuint vs = 0;							// 頂点シェーダの管理番号
+ 	GLuint fs = 0;							// フラグメントシェーダの管理番号
+ 	GLuint prog3D = 0;						// シェーダプログラムの管理番号
 +	GLuint vbo = 0;							// 頂点バッファの管理番号
 +	GLuint ibo = 0;							// インデックスバッファの管理番号
 +	GLuint vao = 0;							// 頂点属性配列の管理番号

@@ -29,4 +29,4 @@ private:
 	GLuint tex = 0;							// テクスチャ
 };
 
-#endif						// ENGINE_H_INCLUDED(インクルードガード)
+#endif						// !ENGINE_H_INCLUDED(インクルードガード)

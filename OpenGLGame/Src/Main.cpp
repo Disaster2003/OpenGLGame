@@ -2,6 +2,7 @@
 * @file Main.cpp
 */
 #include "glad/glad.h"  // GLADライブラリの関数が定義されているヘッダファイル
+#include "Engine/GameObject.h"
 #include "Engine/Engine.h"
 #include <GLFW/glfw3.h> // GLFWライブラリの関数が定義されているヘッダファイル
 
@@ -328,8 +329,6 @@ int Engine::Run()
 
 #pragma region 頂点データをGPUメモリにコピー
     // 頂点データ(x,y,z座標が-1~+1の座標系における座標)
-    struct vec2 { float x, y; };
-    struct vec3 { float x, y, z; };
     struct Vertex
     {
         vec3 position; // 頂点座標
@@ -492,15 +491,6 @@ int Engine::Run()
 #pragma endregion
 
 #pragma region 物体のパラメータ
-    class GameObject
-    {
-    public:
-        vec3 position = { 0, 0, 0 };    // 物体の位置
-        vec3 rotation = { 0, 0, 0 };    // 物体の回転角度
-        vec3 scale = { 1,1,1 };         // 物体の拡大率
-        float color[4] = { 1, 1, 1, 1 };// 物体の色
-    };
-
     // カメラオブジェクト
     GameObject camera;
 
