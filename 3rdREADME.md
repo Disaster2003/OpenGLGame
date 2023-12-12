@@ -1045,3 +1045,5 @@ if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
 +	gl_Position.z = -gl_Position.z * B + A; // 深度値を補正
  }
 ```
+
+### 3-4.立方体の完成
