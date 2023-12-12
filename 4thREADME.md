@@ -216,7 +216,7 @@ Main.cppの
 ローカル変数 -> メンバ変数にしなさい.
 
 `Main.cpp`
-```C++
+```diff
      // -X(左の面)
      { {-1, 1, 1 }, { 0, 0 } },
      { {-1, 1,-1 }, { 1, 0 } },
@@ -228,7 +228,7 @@ Main.cppの
  glCreateBuffers
  (
 ```
-```C++
+```diff
      20,21,22,22,23,20,
  };
 -GLuint ibo = 0; // インデックスバッファの管理番号
@@ -236,14 +236,14 @@ Main.cppの
  glCreateBuffers
  (
 ```
-```C++
+```diff
  #pragma region 頂点データ形式の設定
 -    GLuint vao = 0; // 頂点属性配列の管理番号
      // 頂点属性オブジェクトの作成
      glCreateVertexArrays
      (
 ```
-```C++
+```diff
  #pragma endregion
  
  #pragma region テクスチャの作成
@@ -254,7 +254,7 @@ Main.cppの
 ```
 
 `Engine.h`
-```C++
+```diff
  	int Run();
  
  private:
@@ -266,7 +266,7 @@ Main.cppの
 +	GLuint vbo = 0;							// 頂点バッファの管理番号
 +	GLuint ibo = 0;							// インデックスバッファの管理番号
 +	GLuint vao = 0;							// 頂点属性配列の管理番号
-+	GLuint tex = 0;							// テクスチャ
++	GLuint tex = 0;                         // テクスチャの作成
  };
  
  #endif						// ENGINE_H_INCLUDED(インクルードガード)
@@ -361,16 +361,33 @@ camera,box0,box1を
 
 メンバ変数にしなさい
 
+`Main.cpp`
+```diff
++#pragma region boxのパラメータ
+-    // カメラオブジェクト
+-	 GameObject camera;						// カメラオブジェクト
+-	 GameObject box0;
+-	 GameObject box1;
+-
+     box0.scale = { 0.2f,0.2f,0.2f };
+     box0.position = { 0.6f,0.6f,-1 };
+ 
+     box1.color[1] = 0.5f; // 緑成分の明るさを半分にしてみる
+     box1.scale = { 0.2f, 0.2f, 0.2f };
+     box1.position = { 0, 0, -1 };
+ #pragma endregion
+```
+
 `Engine.h`
-```C++
-	GLuint tex = 0;							// テクスチャ
-
-	GameObject camera;						// カメラオブジェクト
-	GameObject box0;
-	GameObject box1;
-};
-
-#endif						// !ENGINE_H_INCLUDED(インクルードガード)
+```diff
+ 	GLuint tex = 0                          // テクスチャの作成
+ 
++	GameObject camera;						// カメラオブジェクト
++	GameObject box0;
++	GameObject box1;
+ };
+ 
+ #endif						// !ENGINE_H_INCLUDED(インクルードガード)
 ```
 
 ### 1-4.Run関数を3つのパートに分割

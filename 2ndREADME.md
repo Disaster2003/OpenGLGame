@@ -451,24 +451,24 @@ colors配列に白色の要素を追加して,
 四角形が4色で塗られるようにしましょう.
 
 `standard.vert`
-```C++
-void main()
-{
-  const vec4 colors[] = {
-    { 1, 0, 0, 1 }, // 赤
-    { 0, 1, 0, 1 }, // 緑
-    { 0, 0, 1, 1 }, // 青
-    { 1, 1, 1, 1 }, // 白
-  };
-  int i = gl_VertexID + int(timer);
-  outColor = colors[i % 4];
-
-  gl_Position = 
-    vec4
-    (
-        inPosition,
-        1
-    );
+```diff
+ void main()
+ {
+   const vec4 colors[] = {
+     { 1, 0, 0, 1 }, // 赤
+     { 0, 1, 0, 1 }, // 緑
+     { 0, 0, 1, 1 }, // 青
++    { 1, 1, 1, 1 }, // 白
+   };
++  int i = gl_VertexID + int(timer);
++  outColor = colors[i % 4];
+ 
+   gl_Position = 
+     vec4
+     (
+         inPosition,
+         1
+     );
 ```
 
 ## 課題02
@@ -479,24 +479,24 @@ void main()
 C++プログラムまたはシェーダを変更しましょう.
 
 `Main.cpp`
-```C++
-// 描画に使うシェーダを指定
-glUseProgram(prog3D);
-
-// ユニフォーム変数にデータをコピー
-// アプリ起動時からの経過時間の取得
-const float timer = static_cast<float>(glfwGetTime());
-// 変数ユニフォームにデータワット
-glProgramUniform1f
-(
-    prog3D,         // プログラムオブジェクトの管理番号
-    0,              // 送り先ロケーション番号
-    timer * 0.5f    // 送るデータ
-);
-
-// 図形を描画
-glDrawElementsInstanced
-(
+```diff
+ // 描画に使うシェーダを指定
+ glUseProgram(prog3D);
+ 
+ // ユニフォーム変数にデータをコピー
+ // アプリ起動時からの経過時間の取得
+ const float timer = static_cast<float>(glfwGetTime());
+ // 変数ユニフォームにデータワット
+ glProgramUniform1f
+ (
+     prog3D,         // プログラムオブジェクトの管理番号
+     0,              // 送り先ロケーション番号
++    timer * 0.5f    // 送るデータ
+ );
+ 
+ // 図形を描画
+ glDrawElementsInstanced
+ (
 ```
 
 ## 3.テクスチャ
@@ -995,7 +995,7 @@ timerユニフォーム変数を復活させて,
 上から下に流れる水面を表現しなさい.
 
 `Main.cpp`
-```C++
+```diff
  // 描画に使うシェーダを指定
  glUseProgram(prog3D);
  
@@ -1015,7 +1015,7 @@ timerユニフォーム変数を復活させて,
  (
 ```
 `standard.vert`
-```C++
+```diff
  // シェーダからの出力
  layout(location=1) out vec2 outTexcoord;    // テクスチャ座標
  

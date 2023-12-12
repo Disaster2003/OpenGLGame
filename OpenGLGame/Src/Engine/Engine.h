@@ -19,6 +19,10 @@ public:
 	int Run();
 
 private:
+	int Initialize();
+	void Update();
+	void Render();
+
 	GLFWwindow* window = nullptr;           // ウィンドウオブジェクト
 	const std::string title = "OpenGLGame"; // ウィンドウタイトル
 	GLuint vs = 0;							// 頂点シェーダの管理番号
@@ -32,6 +36,7 @@ private:
 	GameObject camera;						// カメラオブジェクト
 	GameObject box0;
 	GameObject box1;
+	GLsizei indexCount = 0;
 };
 
 #endif						// !ENGINE_H_INCLUDED(インクルードガード)

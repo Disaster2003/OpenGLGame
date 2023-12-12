@@ -93,7 +93,7 @@
 0.2にしなさい.
 
 `Main.cpp`
-```C++
+```diff
      // 1番目の頂点属性の設定
      glVertexAttribPointer
      (
@@ -123,7 +123,7 @@
          float color[4] = { 1, 1, 1, 1 };// 物体の色
      };
      GameObject box0;
-     box0.scale = { 0.2f,0.2f,0.2f };
++    box0.scale = { 0.2f,0.2f,0.2f };
  #pragma endregion
  
  #pragma region テクスチャの作成
@@ -221,7 +221,7 @@
 図形の座標を変更し,
 
 画面の好きな位置に表示しなさい.
-```C++
+```diff
      // 1番目の頂点属性の設定
      glVertexAttribPointer
      (
@@ -253,7 +253,7 @@
      };
      GameObject box0;
      box0.scale = { 0.2f,0.2f,0.2f };
-     box0.position = { ?,?,0 };
++    box0.position = { ?,?,0 };
  #pragma endregion
  
  #pragma region テクスチャの作成
@@ -529,7 +529,7 @@ GLSLの「スウィズリング(swizzling)」
 box1が画面に表示されるように,
 
 Z軸の値(Z座標)を変更しなさい.
-```C++
+```diff
  #pragma region 物体のパラメータ
      class GameObject
      {
@@ -874,42 +874,42 @@ Z軸の値(Z座標)を変更しなさい.
 
 追加しなさい.
 
-キーで前方( W-Z方向),
+Wキーで前方(-Z方向),
 
 Sキーで後方(+Z方向)に移動させること.
 
 `Main.cpp`
-```C++
-// glfwGetKey(GLFWウィンドウオブジェクトのアドレス,キー番号);
-// GLFW_RELEASE : キー入力なし
-// GLFW_PRESS   : キー入力あり
-// カメラのX軸移動
-if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-{
-  camera.position.x -= 0.001f;
-}
-if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-{
-  camera.position.x += 0.001f;
-}
-if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-{
-  camera.position.z -= 0.001f;
-}
-if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-{
-  camera.position.z += 0.001f;
-}
-
-// カメラのY軸回転
-if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
-{
-  camera.rotation.y -= 0.0005f;
-}
-if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
-{
-  camera.rotation.y += 0.0005f;
-}
+```diff
+ // glfwGetKey(GLFWウィンドウオブジェクトのアドレス,キー番号);
+ // GLFW_RELEASE : キー入力なし
+ // GLFW_PRESS   : キー入力あり
+ // カメラのX軸移動
+ if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+ {
+   camera.position.x -= 0.001f;
+ }
+ if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+ {
+   camera.position.x += 0.001f;
+ }
++if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
++{
++  camera.position.z -= 0.001f;
++}
++if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
++{
++  camera.position.z += 0.001f;
++}
+ 
+ // カメラのY軸回転
+ if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
+ {
+   camera.rotation.y -= 0.0005f;
+ }
+ if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
+ {
+   camera.rotation.y += 0.0005f;
+ }
 ```
 
 ### 3-2.立方体の定義
@@ -1079,56 +1079,56 @@ vertexDataとindexDataに
 
 追加し,箱を完成させなさい.
 `Main.cpp`
-```C++
-        // -Y(下の面)
-        { { 1,-1,-1 }, { 0, 0 } },
-        { { 1,-1, 1 }, { 1, 0 } },
-        { {-1,-1, 1 }, { 1, 1 } },
-        { {-1,-1,-1 }, { 0, 1 } },
-        
-        // +X(右の面)
-        { { 1, 1, 1 }, { 0, 0 } },
-        { { 1, 1,-1 }, { 1, 0 } },
-        { { 1,-1,-1 }, { 1, 1 } },
-        { { 1,-1, 1 }, { 0, 1 } },
-        
-        // -X(左の面)
-        { {-1, 1, 1 }, { 0, 0 } },
-        { {-1, 1,-1 }, { 1, 0 } },
-        { {-1,-1,-1 }, { 1, 1 } },
-        { {-1,-1, 1 }, { 0, 1 } },
-    };
-    GLuint vbo = 0; // 頂点バッファの管理番号
-    // バッファオブジェクト(GPUメモリを管理するためのオブジェクト)の作成
-    glCreateBuffers
-    (
-        1,      // 作成するオブジェクト数
-        &vbo    // 頂点バッファの管理番号を格納する配列
-    );
-    // GPUメモリを確保のち,データをコピー
-    // データのアドレスがnullptrなら,
-    // GPUメモリの確保のみ
-    glNamedBufferStorage
-    (
-        vbo,                // 頂点バッファの管理番号
-        sizeof(vertexData), // コピーするバイト数
-        vertexData,         // コピーするデータのアドレス
-        0                   // 各種フラグ
-    );
-#pragma endregion
-
-#pragma region インデックスデータをGPUメモリにコピー
-    // インデックスデータ(図形を構成する頂点番号)
-    const GLushort indexData[] =
-    {
-        0, 1, 2, 2, 3, 0,
-        4, 5, 6, 6, 7, 4,
-        8, 9,10,10,11, 8,
-        12,13,14,14,15,12,
-        16, 17,18,18,19, 16,
-        20,21,22,22,23,20,
-    };
-    GLuint ibo = 0; // インデックスバッファの管理番号
+```diff
+         // -Y(下の面)
+         { { 1,-1,-1 }, { 0, 0 } },
+         { { 1,-1, 1 }, { 1, 0 } },
+         { {-1,-1, 1 }, { 1, 1 } },
+         { {-1,-1,-1 }, { 0, 1 } },
+         
++        // +X(右の面)
++        { { 1, 1, 1 }, { 0, 0 } },
++        { { 1, 1,-1 }, { 1, 0 } },
++        { { 1,-1,-1 }, { 1, 1 } },
++        { { 1,-1, 1 }, { 0, 1 } },
++        
++        // -X(左の面)
++        { {-1, 1, 1 }, { 0, 0 } },
++        { {-1, 1,-1 }, { 1, 0 } },
++        { {-1,-1,-1 }, { 1, 1 } },
++        { {-1,-1, 1 }, { 0, 1 } },
+     };
+     GLuint vbo = 0; // 頂点バッファの管理番号
+     // バッファオブジェクト(GPUメモリを管理するためのオブジェクト)の作成
+     glCreateBuffers
+     (
+         1,      // 作成するオブジェクト数
+         &vbo    // 頂点バッファの管理番号を格納する配列
+     );
+     // GPUメモリを確保のち,データをコピー
+     // データのアドレスがnullptrなら,
+     // GPUメモリの確保のみ
+     glNamedBufferStorage
+     (
+         vbo,                // 頂点バッファの管理番号
+         sizeof(vertexData), // コピーするバイト数
+         vertexData,         // コピーするデータのアドレス
+         0                   // 各種フラグ
+     );
+ #pragma endregion
+ 
+ #pragma region インデックスデータをGPUメモリにコピー
+     // インデックスデータ(図形を構成する頂点番号)
+     const GLushort indexData[] =
+     {
+         0, 1, 2, 2, 3, 0,
+         4, 5, 6, 6, 7, 4,
+         8, 9,10,10,11, 8,
+         12,13,14,14,15,12,
++        16,17,18,18,19,16,
++        20,21,22,22,23,20,
+     };
+     GLuint ibo = 0; // インデックスバッファの管理番号
 ```
 
 ### 3-5.視野角の設定

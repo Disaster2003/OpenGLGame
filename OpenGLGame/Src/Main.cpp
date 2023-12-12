@@ -231,6 +231,31 @@ int WINAPI WinMain
 /// 0以外 : エラーが発生</returns>
 int Engine::Run()
 {
+    const int result = Initialize();
+    if (result)
+    {
+        return result;
+    }
+    // ウィンドウの終了要求が来ていなかった(0)時,
+    // メインループ処理を続ける
+    // 引数 : GLFWwindowへのポインタ
+    while (!glfwWindowShouldClose(window))
+    {
+        Update();
+        Render();
+    }
+    // GLFWライブラリの終了
+    glfwTerminate();
+    return 0;
+}
+
+/// <summary>
+/// ゲームエンジンの初期化
+/// </summary>
+/// <returns>0 : 正常に初期化,
+/// 0以外 : エラーが発生した</returns>
+int Engine::Initialize()
+{
 #pragma region GLFWライブラリの初期化
     // 初期化に成功しなかった(!GLFW_TRUE)時,
     // 1を返して終了
@@ -294,13 +319,13 @@ int Engine::Run()
 
 #pragma region シェーダのコンパイルとリンク
     // シェーダを読み込んでコンパイル
-    vs = 
+    vs =
         CompileShader
         (
             GL_VERTEX_SHADER,
             "Res/standard.vert"
         );
-    fs = 
+    fs =
         CompileShader
         (
             GL_FRAGMENT_SHADER,
@@ -352,19 +377,19 @@ int Engine::Run()
         { { 1, 1,-1 }, { 1, 0 } },
         { {-1, 1,-1 }, { 1, 1 } },
         { {-1, 1, 1 }, { 0, 1 } },
-        
+
         // -Y(下の面)
         { { 1,-1,-1 }, { 0, 0 } },
         { { 1,-1, 1 }, { 1, 0 } },
         { {-1,-1, 1 }, { 1, 1 } },
         { {-1,-1,-1 }, { 0, 1 } },
-        
+
         // +X(右の面)
         { { 1, 1, 1 }, { 0, 0 } },
         { { 1, 1,-1 }, { 1, 0 } },
         { { 1,-1,-1 }, { 1, 1 } },
         { { 1,-1, 1 }, { 0, 1 } },
-        
+
         // -X(左の面)
         { {-1, 1, 1 }, { 0, 0 } },
         { {-1, 1,-1 }, { 1, 0 } },
@@ -400,6 +425,7 @@ int Engine::Run()
         16, 17,18,18,19, 16,
         20,21,22,22,23,20,
     };
+    indexCount = static_cast<GLsizei>(std::size(indexData));  // インデックス数
     // バッファオブジェクト(GPUメモリを管理するためのオブジェクト)の作成
     glCreateBuffers
     (
@@ -485,7 +511,7 @@ int Engine::Run()
                 Vertex,     // 構造体名
                 texcoord    // メンバ名
             )
-        )
+            )
     );
 #pragma endregion
 
@@ -502,80 +528,89 @@ int Engine::Run()
     tex = LoadTexture("Res/box.tga");
 #pragma endregion
 
-#pragma region メインループの定義
-    // ウィンドウの終了要求が来ていなかった(0)時,
-    // メインループ処理を続ける
-    // 引数 : GLFWwindowへのポインタ
-    while (!glfwWindowShouldClose(window))
+
+    return 0; // 正常に初期化された
+}
+
+/// <summary>
+/// ゲームエンジンの状態の更新
+/// </summary>
+void Engine::Update()
+{
+    // box0の回転
+    box0.rotation.y += 0.0001f;
+
+    // glfwGetKey(GLFWウィンドウオブジェクトのアドレス,キー番号);
+    // GLFW_RELEASE : キー入力なし
+    // GLFW_PRESS   : キー入力あり
+    // カメラの移動
+    const float cameraSpeed = 0.0005f;
+    const float cameraCos = cos(camera.rotation.y);
+    const float cameraSin = sin(camera.rotation.y);
+    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
     {
-        // box0の回転
-        box0.rotation.y += 0.0001f;
+        camera.position.x -= cameraSpeed * cameraCos;
+        camera.position.z -= cameraSpeed * -cameraSin;
+    }
+    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+    {
+        camera.position.x += cameraSpeed * cameraCos;
+        camera.position.z += cameraSpeed * -cameraSin;
+    }
+    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+    {
+        camera.position.x -= cameraSpeed * cameraSin;
+        camera.position.z -= cameraSpeed * cameraCos;
+    }
+    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+    {
+        camera.position.x += cameraSpeed * cameraSin;
+        camera.position.z += cameraSpeed * cameraCos;
+    }
 
-        // glfwGetKey(GLFWウィンドウオブジェクトのアドレス,キー番号);
-        // GLFW_RELEASE : キー入力なし
-        // GLFW_PRESS   : キー入力あり
-        // カメラの移動
-        const float cameraSpeed = 0.0005f;
-        const float cameraCos = cos(camera.rotation.y);
-        const float cameraSin = sin(camera.rotation.y);
-        if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-        {
-            camera.position.x -= cameraSpeed * cameraCos;
-            camera.position.z -= cameraSpeed * -cameraSin;
-        }
-        if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-        {
-            camera.position.x += cameraSpeed * cameraCos;
-            camera.position.z += cameraSpeed * -cameraSin;
-        }
-        if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-        {
-            camera.position.x -= cameraSpeed * cameraSin;
-            camera.position.z -= cameraSpeed * cameraCos;
-        }
-        if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-        {
-            camera.position.x += cameraSpeed * cameraSin;
-            camera.position.z += cameraSpeed * cameraCos;
-        }
+    //// マウスの入力の取得
+    //double mouseX, mouseY, mouseBeforeX, mouseBeforeY;
+    //mouseBeforeX = mouseX;
+    //mouseBeforeY = mouseY;
+    //glfwGetCursorPos
+    //(
+    //  window,
+    //  &mouseX,
+    //  &mouseY
+    // );
+    //if (mouseBeforeX != mouseX)
+    //{
+    //    camera.rotation.y += 0.0005f * mouseX - mouseBeforeX;
+    //}
+    //if (mouseBeforeY != mouseY)
+    //{
+    //    camera.rotation.x += 0.0005f * mouseY - mouseBeforeY;
+    //}
 
-        //// マウスの入力の取得
-        //double mouseX, mouseY, mouseBeforeX, mouseBeforeY;
-        //mouseBeforeX = mouseX;
-        //mouseBeforeY = mouseY;
-        //glfwGetCursorPos
-        //(
-        //  window,
-        //  &mouseX,
-        //  &mouseY
-        // );
-        //if (mouseBeforeX != mouseX)
-        //{
-        //    camera.rotation.y += 0.0005f * mouseX - mouseBeforeX;
-        //}
-        //if (mouseBeforeY != mouseY)
-        //{
-        //    camera.rotation.x += 0.0005f * mouseY - mouseBeforeY;
-        //}
+    // カメラの回転
+    if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
+    {
+        camera.rotation.y -= 0.0005f;
+    }
+    if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
+    {
+        camera.rotation.y += 0.0005f;
+    }
+    //if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
+    //{
+    //  camera.rotation.x += 0.0005f;
+    //}
+    //if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
+    //{
+    //  camera.rotation.x -= 0.0005f;
+    //}
+}
 
-        // カメラの回転
-        if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
-        {
-          camera.rotation.y -= 0.0005f;
-        }
-        if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
-        {
-          camera.rotation.y += 0.0005f;
-        }
-        //if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
-        //{
-        //  camera.rotation.x += 0.0005f;
-        //}
-        //if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
-        //{
-        //  camera.rotation.x -= 0.0005f;
-        //}
-
+/// <summary>
+/// ゲームエンジンの状態を描画
+/// </summary>
+void Engine::Render()
+{
         // バックバッファを消去するときに使用する色の指定
         glClearColor
         (
@@ -614,10 +649,10 @@ int Engine::Run()
             fbWidth,    // 描画範囲の幅
             fbHeight    // 描画範囲の高さ
         );
-    
+
         // アスペクト比と視野角の設定
         const float aspectRatio =
-          static_cast<float>(fbWidth) / static_cast<float>(fbHeight);
+            static_cast<float>(fbWidth) / static_cast<float>(fbHeight);
         const float degFovY = 60; // 垂直視野角
         const float radFovY = degFovY * 3.1415926535f / 180;
         const float scaleFov = tan(radFovY / 2); // 視野角による拡大率
@@ -691,7 +726,6 @@ int Engine::Run()
         );
 
         // 図形の描画
-        const GLsizei indexCount = static_cast<GLsizei>(std::size(indexData));    // インデックス数
         glDrawElementsInstanced
         (
             GL_TRIANGLES,       // 基本図形の種類
@@ -751,12 +785,4 @@ int Engine::Run()
         // 「OSからの要求」の処理
         // (キーボードやマウスなどの状態を取得するなど)
         glfwPollEvents();
-    }
-#pragma endregion
-
-#pragma region GLFWライブラリの終了
-    glfwTerminate();
-#pragma endregion
-
-    return 0;
 }
