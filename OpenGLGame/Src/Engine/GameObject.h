@@ -5,6 +5,9 @@
 #define GAMEOBJECT_H_INCLUDED
 #include "VecMath.h"
 
+/// <summary>
+/// •¨‘Ì‚Ìƒpƒ‰ƒ[ƒ^
+/// </summary>
 class GameObject
 {
 public:

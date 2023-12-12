@@ -271,3 +271,79 @@
 ```
 
 ### 1-3.GameObjectクラスの独立化
+`Main.cpp`
+```diff
+ #pragma region 頂点データをGPUメモリにコピー
+     // 頂点データ(x,y,z座標が-1~+1の座標系における座標)
+-    struct vec2 { float x, y; };
+-    struct vec3 { float x, y, z; };
+     struct Vertex
+     {
+```
+```diff
+ #pragma region 物体のパラメータ
+-    class GameObject
+-    {
+-    public:
+-        vec3 position = { 0, 0, 0 };    // 物体の位置
+-        vec3 rotation = { 0, 0, 0 };    // 物体の回転角度
+-        vec3 scale = { 1,1,1 };         // 物体の拡大率
+-        float color[4] = { 1, 1, 1, 1 };// 物体の色
+-    };
+ 
+     // カメラオブジェクト
+     GameObject camera;
+```
+
+`VecMath.h`
+```diff
++/**
++* @file VecMath.h
++*/
++#ifndef VECMATH_H_INCLUDED
++#define VECMATH_H_INCLUDED
++#include <cmath>
++
++struct vec2
++{
++    float x, y;
++};
++struct vec3
++{
++    float x, y, z;
++};
++
++#endif // !VECMATH_H_INCLUDED
+```
+
+`GameObject.h`
+```diff
++/**
++* @file GameObject.h
++*/
++#ifndef GAMEOBJECT_H_INCLUDED
++#define GAMEOBJECT_H_INCLUDED
++#include "VecMath.h"
++
++class GameObject
++{
++public:
++    vec3 position = { 0, 0, 0 };    // 物体の位置
++    vec3 rotation = { 0, 0, 0 };    // 物体の回転角度
++    vec3 scale = { 1,1,1 };         // 物体の拡大率
++    float color[4] = { 1, 1, 1, 1 };// 物体の色
++};
++
++#endif // !GAMEOBJECT_H_INCLUDED
+```
+
+`Main.cpp`
+```diff
+ /**
+ * @file Main.cpp
+ */
+ #include "glad/glad.h"  // GLADライブラリの関数が定義されているヘッダファイル
++#include "Engine/GameObject.h"
+ #include "Engine/Engine.h"
+ #include <GLFW/glfw3.h> // GLFWライブラリの関数が定義されているヘッダファイル
+```
