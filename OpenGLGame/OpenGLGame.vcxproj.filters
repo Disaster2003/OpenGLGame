@@ -24,7 +24,7 @@
     <None Include="packages.config" />
     <None Include="Res\standard.vert" />
     <None Include="Res\standard.frag" />
-    <None Include="..\4thREADME.md" />
+    <None Include="..\5thREADME.md" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\Main.cpp">
