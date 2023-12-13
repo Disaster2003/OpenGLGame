@@ -2711,7 +2711,7 @@ box0を回転させるコードを削除して,
 
 ->ctrl + shift + A
 
-->プロジェクト名\Src\Engine\PlayerComponent.hを入力
+->プロジェクト名\Src\PlayerComponent.hを入力
 
 ->追加をクリック
 

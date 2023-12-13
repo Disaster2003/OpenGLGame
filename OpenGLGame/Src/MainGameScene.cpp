@@ -6,13 +6,6 @@
 #include <string>
 #include <fstream>
 
-/**
-* シーンを初期化する
-*
-* @retval true  初期化成功
-* @retval false 初期化失敗
-*/
-
 /// <summary>
 /// シーンの初期化
 /// </summary>

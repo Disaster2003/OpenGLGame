@@ -6,9 +6,9 @@
 #include "Engine/Scene.h"
 #include <vector>
 
-/**
-* メインゲーム画面
-*/
+/// <summary>
+/// メインゲーム画面
+/// </summary>
 class MainGameScene : public Scene
 {
 public:
