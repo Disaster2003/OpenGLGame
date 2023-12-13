@@ -2223,4 +2223,185 @@ public関数やfriend指定が必要
 ### 2-2.ゲームオブジェクトクラスの拡張
 `GameObject.h`
 ```diff
+ /**
+ * @file GameObject.h
+ */
++#ifndef GAMEOBJECT_H_INCLUDED
++#define GAMEOBJECT_H_INCLUDED
++#include "Component.h"
+ #include "VecMath.h"
++#include <string>
++#include <vector>
++#include <memory>
+
++// 先行宣言
++class Engine;
++class GameObject;
++using GameObjectPtr = std::shared_ptr<GameObject>; // ゲームオブジェクトのポインタ
++using GameObjectList = std::vector<GameObjectPtr>; // ゲームオブジェクトポインタの配列
+
+ /// <summary>
++/// ゲームに登場する様々なオブジェクトを表す基本クラス
+ /// </summary>
++class GameObject
++{
++    friend Engine;
++public:
++    GameObject() = default;
++    virtual ~GameObject() = default;
++
++    // ゲームエンジンを取得
++    Engine* GetEngine() const
++    {
++        return engine;
++    }
++
++    // ゲームオブジェクトをエンジンから削除する
++    void Destroy()
++    {
++        isDestroyed = true;
++    }
++
++    // ゲームオブジェクトが破壊されていたらtrueを返す
++    bool IsDestroyed() const
++    {
++        return isDestroyed;
++    }
++
++    // ゲームオブジェクトにコンポーネントを追加する
++    template<typename T>
++    std::shared_ptr<T> AddComponent()
++    {
++        auto p = std::make_shared<T>();
++        p->owner = this;
++        components.push_back(p);
++        p->Awake();
++        return p;
++    }
++
++    // ゲームオブジェクトからコンポーネントを削除する
++    void RemoveDestroyedComponent();
++
++    // イベント制御
++    virtual void Start();
++    virtual void Update(float deltaTime);
++    virtual void OnCollision(
++        const ComponentPtr& self, const ComponentPtr& other);
++    virtual void OnDestroy();
++
++    std::string name;                   // オブジェクト名
++    vec3 position = { 0, 0, 0 };        // 物体の位置
++    vec3 rotation = { 0, 0, 0 };        // 物体の回転角度
++    vec3 scale = { 1,1,1 };             // 物体の拡大率
++    float color[4] = { 1, 1, 1, 1 };    // 物体の色
++
++private:
++    Engine* engine = nullptr;             // エンジンのアドレス
++    bool isDestroyed = false;             // 死亡フラグ
++    std::vector<ComponentPtr> components; // コンポーネント配列
++};
+
+ #endif // !GAMEOBJECT_H_INCLUDED
+```
+
+`GameObject.cpp`
+```diff
++/**
++* @file GameObject.cpp
++*/
++#include "GameObject.h"
++#include <algorithm>
++
++/// <summary>
++/// ゲームオブジェクトから削除予定のコンポーネントを削除する
++/// </summary>
++void GameObject::RemoveDestroyedComponent()
++{
++    if (components.empty())
++    {
++        return; // コンポーネントを持っていなければ何もしない
++    }
++
++    // 破棄予定の有無でコンポーネントを分ける
++    const auto iter =
++        std::stable_partition
++        (
++            components.begin(), // 範囲の先頭
++            components.end(),   // 範囲の終端
++            // 振り分け条件
++            [](const auto& p)
++            {
++                return !p->IsDestroyed();
++            });
++
++    // 破棄予定のコンポーネントを別の配列に移動
++    // 引数 : もとになるイテレータ
++    std::vector<ComponentPtr> destroyList(
++        std::move_iterator(iter),
++        std::move_iterator(components.end()));
++
++    // 配列から移動済みコンポーネントを削除
++    components.erase(iter, components.end());
++
++    // 破棄予定のコンポーネントのOnDestoryを実行
++    for (auto& e : destroyList)
++    {
++        e->OnDestroy();
++    }
++
++    // ここで実際にコンポーネントが削除される(destoyListの寿命が終わるため)
++}
++
++/// <summary>
++/// スタートイベント
++/// </summary>
++void GameObject::Start()
++{
++    for (auto& e : components)
++    {
++        if (!e->isStarted)
++        {
++            e->Start();
++            e->isStarted = true;
++        }
++    }
++}
++
++/// <summary>
++/// 更新イベント
++/// </summary>
++/// <param name="deltaTime">前回の更新からの経過時間(秒)</param>
++void GameObject::Update(float deltaTime)
++{
++    for (auto& e : components)
++    {
++        e->Update(deltaTime);
++    }
++    RemoveDestroyedComponent();
++}
++
++/// <summary>
++/// 衝突イベント
++/// </summary>
++/// <param name="self">衝突したコンポーネント(自分)</param>
++/// <param name="other">衝突したコンポーネント(相手)</param>
++void GameObject::OnCollision(
++    const ComponentPtr& self, const ComponentPtr& other)
++{
++    for (auto& e : components)
++    {
++        e->OnCollision(self, other);
++    }
++}
++
++/// <summary>
++/// 削除イベント
++/// </summary>
++void GameObject::OnDestroy()
++{
++    for (auto& e : components)
++    {
++        e->OnDestroy();
++    }
++}
 ```
