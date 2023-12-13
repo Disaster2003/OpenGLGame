@@ -53,7 +53,7 @@ void APIENTRY DebugCallback
 }
 
 /// <summary>
-/// シェーダファイルを読み込んでコンパイルする
+/// シェーダファイルを読み込んでコンパイル
 /// </summary>
 /// <param name="type">シェーダの種類</param>
 /// <param name="filename">シェーダファイル名</param>
@@ -207,7 +207,7 @@ GLuint LoadTexture(const char* filename)
 }
 
 /// <summary>
-/// ゲームエンジンを実行する
+/// ゲームエンジンの実行
 /// </summary>
 /// <returns>0 : 正常に実行が完了,
 /// 0以外 : エラーが発生</returns>
@@ -225,10 +225,23 @@ int Engine::Run()
     {
         Update();
         Render();
+        RemoveDestroyedGameObject();
     }
     // GLFWライブラリの終了
     glfwTerminate();
     return 0;
+}
+
+/// <summary>
+/// ゲームエンジンから全てのゲームオブジェクトの破棄
+/// </summary>
+void Engine::ClearGameObjectAll()
+{
+    for (auto& e : gameObjects)
+    {
+        e->OnDestroy();
+    }
+    gameObjects.clear();
 }
 
 /// <summary>
@@ -498,12 +511,18 @@ int Engine::Initialize()
 #pragma endregion
 
 #pragma region boxのパラメータ
+    auto& box0 = *Create<GameObject>("box0");
     box0.scale = { 0.2f,0.2f,0.2f };
     box0.position = { 0.6f,0.6f,-1 };
 
+    auto& box1 = *Create<GameObject>("box1");
     box1.color[1] = 0.5f; // 緑成分の明るさを半分にしてみる
     box1.scale = { 0.2f, 0.2f, 0.2f };
     box1.position = { 0, 0, -1 };
+#pragma endregion
+
+#pragma region ゲームオブジェクト配列の容量を予約
+    gameObjects.reserve(1000);
 #pragma endregion
 
 #pragma region テクスチャの作成
@@ -514,13 +533,10 @@ int Engine::Initialize()
 }
 
 /// <summary>
-/// ゲームエンジンの状態の更新
+/// ゲームエンジンの状態を更新
 /// </summary>
 void Engine::Update()
 {
-    // box0の回転
-    box0.rotation.y += 0.0001f;
-
     // glfwGetKey(GLFWウィンドウオブジェクトのアドレス,キー番号);
     // GLFW_RELEASE : キー入力なし
     // GLFW_PRESS   : キー入力あり
@@ -585,6 +601,20 @@ void Engine::Update()
     //{
     //  camera.rotation.x -= 0.0005f;
     //}
+
+    // デルタタイム(前回の更新からの経過時間)の計算
+    // glfwGetTime : プログラムが起動してからの経過時間の取得
+    const double currentTime = glfwGetTime(); // 現在時刻
+    deltaTime = static_cast<float>(currentTime - previousTime);
+    previousTime = currentTime;
+
+    // 経過時間が長すぎる場合は適当に短くする(主にデバッグ対策)
+    if (deltaTime >= 0.5f)
+    {
+        deltaTime = 1.0f / 60.0f;
+    }
+
+    UpdateGameObject(deltaTime);
 }
 
 /// <summary>
@@ -667,92 +697,58 @@ void Engine::Render()
     // GL_DEPTH_TEST : 深度テスト
     glEnable(GL_DEPTH_TEST);
 
-    // 変数ユニフォームにデータワット
-    glProgramUniform4fv
-    (
-        prog3D,     // プログラムオブジェクトの管理番号
-        100,        // 送り先ロケーション番号
-        1,          // データ数
-        box0.color  // データのアドレス
-    );
-    glProgramUniform3fv
-    (
-        prog3D,         // プログラムオブジェクトの管理番号
-        0,              // 送り先ロケーション番号
-        1,              // データ数
-        &box0.scale.x   // データのアドレス
-    );
-    glProgramUniform3fv
-    (
-        prog3D,             // プログラムオブジェクトの管理番号
-        1,                  // 送り先ロケーション番号
-        1,                  // データ数
-        &box0.position.x    // データのアドレス
-    );
-    glProgramUniform2f
-    (
-        prog3D,
-        2,
-        sin(box0.rotation.y),
-        cos(box0.rotation.y)
-    );
+    // ゲームオブジェクトを描画
+    for (const auto& e : gameObjects)
+    {
+        // ユニフォーム変数にデータワット
+        glProgramUniform4fv
+        (
+            prog3D,     // プログラムオブジェクトの管理番号
+            100,        // 送り先ロケーション番号
+            1,          // データ数
+            e->color  // データのアドレス
+        );
+        glProgramUniform3fv
+        (
+            prog3D,         // プログラムオブジェクトの管理番号
+            0,              // 送り先ロケーション番号
+            1,              // データ数
+            &e->scale.x   // データのアドレス
+        );
+        glProgramUniform3fv
+        (
+            prog3D,             // プログラムオブジェクトの管理番号
+            1,                  // 送り先ロケーション番号
+            1,                  // データ数
+            &e->position.x    // データのアドレス
+        );
+        glProgramUniform2f
+        (
+            prog3D,
+            2,
+            sin(e->rotation.y),
+            cos(e->rotation.y)
+        );
 
-    // 描画に使うテクスチャを
-    // (テクスチャ・イメージ・ユニットに)割り当て
-    glBindTextures
-    (
-        0,      // 割り当て開始インデックス
-        1,      // 割り当てる個数
-        &tex    // テクスチャ管理番号配列のアドレス
-    );
+        // 描画に使うテクスチャを
+        // (テクスチャ・イメージ・ユニットに)割り当て
+        glBindTextures
+        (
+            0,      // 割り当て開始インデックス
+            1,      // 割り当てる個数
+            &tex    // テクスチャ管理番号配列のアドレス
+        );
 
-    // 図形の描画
-    glDrawElementsInstanced
-    (
-        GL_TRIANGLES,       // 基本図形の種類
-        indexCount,         // インデックスデータ数
-        GL_UNSIGNED_SHORT,  // インデックスデータの型
-        0,                  // インデックスデータの開始位置
-        1                   // 描画する図形の数
-    );
-
-    // ふたつめの図形の描画
-    glProgramUniform4fv
-    (
-        prog3D,     // プログラムオブジェクトの管理番号
-        100,        // 送り先ロケーション番号
-        1,          // データ数
-        box1.color  // データのアドレス
-    );
-    glProgramUniform3fv
-    (
-        prog3D,         // プログラムオブジェクトの管理番号
-        0,              // 送り先ロケーション番号
-        1,              // データ数
-        &box1.scale.x   // データのアドレス
-    );
-    glProgramUniform3fv
-    (
-        prog3D,             // プログラムオブジェクトの管理番号
-        1,                  // 送り先ロケーション番号
-        1,                  // データ数
-        &box1.position.x    // データのアドレス
-    );
-    glProgramUniform2f
-    (
-        prog3D,
-        2,
-        sin(box1.rotation.y),
-        cos(box1.rotation.y)
-    );
-    glDrawElementsInstanced
-    (
-        GL_TRIANGLES,       // 基本図形の種類
-        indexCount,         // インデックスデータ数
-        GL_UNSIGNED_SHORT,  // インデックスデータの型
-        0,                  // インデックスデータの開始位置
-        1                   // 描画する図形の数
-    );
+        // 図形の描画
+        glDrawElementsInstanced
+        (
+            GL_TRIANGLES,       // 基本図形の種類
+            indexCount,         // インデックスデータ数
+            GL_UNSIGNED_SHORT,  // インデックスデータの型
+            0,                  // インデックスデータの開始位置
+            1                   // 描画する図形の数
+        );
+    }
 
     // VAOの割り当てを解除
     // 引数 : 割り当てる頂点属性配列の管理番号
@@ -766,4 +762,57 @@ void Engine::Render()
     // 「OSからの要求」の処理
     // (キーボードやマウスなどの状態を取得するなど)
     glfwPollEvents();
+}
+
+/// <summary>
+/// ゲームオブジェクトの状態を更新
+/// </summary>
+/// <param name="deltaTime">前回の更新からの経過時間(秒)</param>
+void Engine::UpdateGameObject(float deltaTime)
+{
+    // 要素の追加に対応するため添字を選択
+    for (int i = 0; i < gameObjects.size(); ++i)
+    {
+        GameObject* e = gameObjects[i].get();
+        if (!e->IsDestroyed())
+        {
+            e->Start();
+            e->Update(deltaTime);
+        }
+    }
+} // UpdateGameObject
+
+/// <summary>
+/// 破棄予定のゲームオブジェクトの削除
+/// </summary>
+void Engine::RemoveDestroyedGameObject()
+{
+    if (gameObjects.empty())
+    {
+        return; // ゲームオブジェクトを持っていなければ何もしない
+    }
+
+    // 破棄予定の有無でゲームオブジェクトを分ける
+    const auto iter = std::partition(
+        gameObjects.begin(), gameObjects.end(),
+        [](const GameObjectPtr& e)
+        {
+            return !e->IsDestroyed();
+        });
+
+    // 破棄予定のオブジェクトを別の配列に移動
+    GameObjectList destroyList(
+        std::make_move_iterator(iter),
+        std::make_move_iterator(gameObjects.end()));
+
+    // 配列から移動済みオブジェクトを削除
+    gameObjects.erase(iter, gameObjects.end());
+
+    // 破棄予定のオブジェクトのOnDestroyを実行
+    for (auto& e : destroyList)
+    {
+        e->OnDestroy();
+    }
+
+    // ここで実際にゲームオブジェクトが削除される(destoyListの寿命が終わるため)
 }
