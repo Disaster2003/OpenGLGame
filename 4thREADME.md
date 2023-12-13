@@ -2407,3 +2407,278 @@ public関数やfriend指定が必要
 ```
 
 ### 2-3.エンジンクラスでゲームオブジェクトの管理
+`Engine.h`
+```diff
+ 	int Run();
+ 
++	/// <summary>
++	/// ゲームオブジェクトを作成する
++	/// </summary>
++	/// <param name="name">オブジェクトの名前</param>
++	/// <param name="position">オブジェクトを配置する座標</param>
++	/// <param name="rotation">オブジェクトの回転角度</param>
++	template<typename T>
++	std::shared_ptr<T> Create
++	(
++		const std::string& name,
++		const vec3& position = { 0, 0, 0 },
++		const vec3& rotation = { 0, 0, 0 }
++	)
++	{
++		std::shared_ptr<T> p = std::make_shared<T>();
++		p->engine = this;
++		p->name = name;
++		p->position = position;
++		p->rotation = rotation;
++		gameObjects.push_back(p); // エンジンに登録
++		return p;
++	}
++
++	// すべてのゲームオブジェクトを削除する
++	void ClearGameObjectAll();
+ 
+ private:
+ 	int Initialize();
+ 	void Update();
+ 	void Render();
++	void UpdateGameObject(float deltaTime);
++	void RemoveDestroyedGameObject();
+ 
+ 	GLFWwindow* window = nullptr;           // ウィンドウオブジェクト
+ 	const std::string title = "OpenGLGame"; // ウィンドウタイトル
+ 	GLuint vs = 0;							// 頂点シェーダの管理番号
+ 	GLuint fs = 0;							// フラグメントシェーダの管理番号
+ 	GLuint prog3D = 0;						// シェーダプログラムの管理番号
+ 	GLuint vbo = 0;							// 頂点バッファの管理番号
+ 	GLuint ibo = 0;							// インデックスバッファの管理番号
+ 	GLuint vao = 0;							// 頂点属性配列の管理番号
++	GameObjectList gameObjects;				// ゲームオブジェクト配列
++	double previousTime = 0;				// 前回更新時の時刻
++	float deltaTime = 0;					// 前回更新からの経過時間
+ 	GLuint tex = 0;							// テクスチャ
+```
+
+`Engine.cpp`
+```diff
+     // ウィンドウの終了要求が来ていなかった(0)時,
+     // メインループ処理を続ける
+     // 引数 : GLFWwindowへのポインタ
+     while (!glfwWindowShouldClose(window))
+     {
+         Update();
+         Render();
++        RemoveDestroyedGameObject();
+     }
+     // GLFWライブラリの終了
+     glfwTerminate();
+     return 0;
+ }
+ 
++/// <summary>
++/// ゲームエンジンから全てのゲームオブジェクトの破棄
++/// </summary>
++void Engine::ClearGameObjectAll()
++{
++    for (auto& e : gameObjects)
++    {
++        e->OnDestroy();
++    }
++    gameObjects.clear();
++}
+ 
+ /// <summary>
+ /// ゲームエンジンの初期化
+ /// </summary>
+ /// <returns>0 : 正常に初期化,
+ /// 0以外 : エラーが発生した</returns>
+ int Engine::Initialize()
+ {
+```
+```diff
+ #pragma endregion
+ 
+ #pragma region boxのパラメータ
++    auto& box0 = *Create<GameObject>("box0");
+     box0.scale = { 0.2f,0.2f,0.2f };
+     box0.position = { 0.6f,0.6f,-1 };
+ 
++    auto& box1 = *Create<GameObject>("box1");
+     box1.color[1] = 0.5f; // 緑成分の明るさを半分にしてみる
+     box1.scale = { 0.2f, 0.2f, 0.2f };
+     box1.position = { 0, 0, -1 };
+ #pragma endregion
+ 
++#pragma region ゲームオブジェクト配列の容量を予約
++    gameObjects.reserve(1000);
++#pragma endregion
+ 
+ #pragma region テクスチャの作成
+```
+```diff
+     if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
+     {
+         camera.rotation.y += 0.0005f;
+     }
+ 
++    // デルタタイム(前回の更新からの経過時間)の計算
++    // glfwGetTime : プログラムが起動してからの経過時間の取得
++    const double currentTime = glfwGetTime(); // 現在時刻
++    deltaTime = static_cast<float>(currentTime - previousTime);
++    previousTime = currentTime;
++
++    // 経過時間が長すぎる場合は適当に短くする(主にデバッグ対策)
++    if (deltaTime >= 0.5f)
++    {
++        deltaTime = 1.0f / 60.0f;
++    }
++
++    UpdateGameObject(deltaTime);
+ }
+ 
+ /// <summary>
+ /// ゲームエンジンの状態を描画
+ /// </summary>
+ void Engine::Render()
+ {
+```
+```diff
+ // 深度テストの有効化
+ // glEnable : 指定されたOpenGLコンテキストの有効化
+ // 引数 : 有効にする機能を表すマクロ定数
+ // GL_DEPTH_TEST : 深度テスト
+ glEnable(GL_DEPTH_TEST);
+ 
++// ゲームオブジェクトを描画
++for (const auto& e : gameObjects)
++{
+     // ユニフォーム変数にデータワット
+     glProgramUniform4fv
+     (
+         prog3D,     // プログラムオブジェクトの管理番号
+         100,        // 送り先ロケーション番号
+         1,          // データ数
++        e->color    // データのアドレス
+     );
+     glProgramUniform3fv
+     (
+         prog3D,         // プログラムオブジェクトの管理番号
+         0,              // 送り先ロケーション番号
+         1,              // データ数
++        &e->scale.x     // データのアドレス
+     );
+     glProgramUniform3fv
+     (
+         prog3D,             // プログラムオブジェクトの管理番号
+         1,                  // 送り先ロケーション番号
+         1,                  // データ数
++        &e->position.x      // データのアドレス
+     );
+     glProgramUniform2f
+     (
+         prog3D,
+         2,
++        sin(e->rotation.y),
++        cos(e->rotation.y)
+     );
+ 
+     // 描画に使うテクスチャを
+     // (テクスチャ・イメージ・ユニットに)割り当て
+     glBindTextures
+     (
+            0,      // 割り当て開始インデックス
+            1,      // 割り当てる個数
+            &tex    // テクスチャ管理番号配列のアドレス
+     );
+
+        // 図形の描画
+        glDrawElementsInstanced
+        (
+            GL_TRIANGLES,       // 基本図形の種類
+            indexCount,         // インデックスデータ数
+            GL_UNSIGNED_SHORT,  // インデックスデータの型
+            0,                  // インデックスデータの開始位置
+            1                   // 描画する図形の数
+        );
++   }
+```
+```diff
+     glfwPollEvents();
+ }
+ 
++/// <summary>
++/// ゲームオブジェクトの状態を更新
++/// </summary>
++/// <param name="deltaTime">前回の更新からの経過時間(秒)</param>
++void Engine::UpdateGameObject(float deltaTime)
++{
++    // 要素の追加に対応するため添字を選択
++    for (int i = 0; i < gameObjects.size(); ++i)
++    {
++        GameObject* e = gameObjects[i].get();
++        if (!e->IsDestroyed())
++        {
++            e->Start();
++            e->Update(deltaTime);
++        }
++    }
++} // UpdateGameObject
++
++/// <summary>
++/// 破棄予定のゲームオブジェクトの削除
++/// </summary>
++void Engine::RemoveDestroyedGameObject()
++{
++    if (gameObjects.empty())
++    {
++        return; // ゲームオブジェクトを持っていなければ何もしない
++    }
++
++    // 破棄予定の有無でゲームオブジェクトを分ける
++    const auto iter = std::partition(
++        gameObjects.begin(), gameObjects.end(),
++        [](const GameObjectPtr& e)
++        {
++            return !e->IsDestroyed();
++        });
++
++    // 破棄予定のオブジェクトを別の配列に移動
++    GameObjectList destroyList(
++        std::make_move_iterator(iter),
++        std::make_move_iterator(gameObjects.end()));
++
++    // 配列から移動済みオブジェクトを削除
++    gameObjects.erase(iter, gameObjects.end());
++
++    // 破棄予定のオブジェクトのOnDestroyを実行
++    for (auto& e : destroyList)
++    {
++        e->OnDestroy();
++    }
++
++    // ここで実際にゲームオブジェクトが削除される(destoyListの寿命が終わるため)
++}
+```
+
+## 課題06
+内容
+
+box0を回転させるコードを削除して,
+
+エラーを解消しなさい.
+
+```diff
+ /// <summary>
+ /// ゲームエンジンの状態の更新
+ /// </summary>
+ void Engine::Update()
+ {
+-    // box0の回転
+-    box0.rotation.y += 0.0001f;
+-
+     // glfwGetKey(GLFWウィンドウオブジェクトのアドレス,キー番号);
+     // GLFW_RELEASE : キー入力なし
+     // GLFW_PRESS   : キー入力あり
+     // カメラの移動
+     const float cameraSpeed = 0.0005f;
+```
+

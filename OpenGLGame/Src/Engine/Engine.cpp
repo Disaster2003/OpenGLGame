@@ -706,21 +706,21 @@ void Engine::Render()
             prog3D,     // プログラムオブジェクトの管理番号
             100,        // 送り先ロケーション番号
             1,          // データ数
-            e->color  // データのアドレス
+            e->color    // データのアドレス
         );
         glProgramUniform3fv
         (
             prog3D,         // プログラムオブジェクトの管理番号
             0,              // 送り先ロケーション番号
             1,              // データ数
-            &e->scale.x   // データのアドレス
+            &e->scale.x     // データのアドレス
         );
         glProgramUniform3fv
         (
             prog3D,             // プログラムオブジェクトの管理番号
             1,                  // 送り先ロケーション番号
             1,                  // データ数
-            &e->position.x    // データのアドレス
+            &e->position.x      // データのアドレス
         );
         glProgramUniform2f
         (
