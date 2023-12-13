@@ -70,9 +70,9 @@
 +*/
 +#ifndef ENGINE_H_INCLUDED	// インクルードガード
 +#define ENGINE_H_INCLUDED	// インクルードガード
-+#include "glad/glad.h"
-+#include <GLFW/glfw3.h>
-+#include <string>
++#include "glad/glad.h"		// GLADライブラリの関数が定義されているヘッダファイル
++#include <GLFW/glfw3.h>	// GLFWライブラリの関数が定義されているヘッダファイル
++#include <string>			// 文字列型や文字列操作関数などが定義されているヘッダファイル
 +
 +/// <summary>
 +/// ゲームエンジン
@@ -309,6 +309,14 @@ Main.cppの
      GameObject camera;
 ```
 
+プロジェクトの選択
+
+->ctrl + shift + A
+
+->プロジェクト名\Src\Engine\VecMath.hを入力
+
+->追加をクリック
+
 `VecMath.h`
 ```diff
 +/**
@@ -358,10 +366,10 @@ Main.cppの
  */
  #ifndef ENGINE_H_INCLUDED	// インクルードガード
  #define ENGINE_H_INCLUDED	// インクルードガード
- #include "glad/glad.h"
+ #include "glad/glad.h"		// GLADライブラリの関数が定義されているヘッダファイル
 +#include "GameObject.h"
- #include <GLFW/glfw3.h>
- #include <string>
+ #include <GLFW/glfw3.h>		// GLFWライブラリの関数が定義されているヘッダファイル
+ #include <string>			// 文字列型や文字列操作関数などが定義されているヘッダファイル
 ```
 
 ## 課題02
@@ -2221,6 +2229,14 @@ public関数やfriend指定が必要
 ->バグの可能性 減
 
 ### 2-2.ゲームオブジェクトクラスの拡張
+プロジェクトの選択
+
+->ctrl + shift + A
+
+->プロジェクト名\Src\Engine\GameObject.hを入力
+
+->追加をクリック
+
 `GameObject.h`
 ```diff
  /**
@@ -2230,8 +2246,8 @@ public関数やfriend指定が必要
 +#define GAMEOBJECT_H_INCLUDED
 +#include "Component.h"
  #include "VecMath.h"
-+#include <string>
-+#include <vector>
++#include <string>       // 文字列型や文字列操作関数などが定義されているヘッダファイル
++#include <vector>       // 動的配列型"vectorクラス"が定義されているヘッダファイル
 +#include <memory>
 
 +// 先行宣言
@@ -2303,6 +2319,14 @@ public関数やfriend指定が必要
 
  #endif // !GAMEOBJECT_H_INCLUDED
 ```
+
+プロジェクトの選択
+
+->ctrl + shift + A
+
+->プロジェクト名\Src\Engine\GameObject.cppを入力
+
+->追加をクリック
 
 `GameObject.cpp`
 ```diff
@@ -2682,3 +2706,4 @@ box0を回転させるコードを削除して,
      const float cameraSpeed = 0.0005f;
 ```
 
+### 2-4.カメラ操作用のコンポーネントの追加

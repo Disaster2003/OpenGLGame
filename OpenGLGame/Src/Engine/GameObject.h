@@ -5,8 +5,8 @@
 #define GAMEOBJECT_H_INCLUDED
 #include "Component.h"
 #include "VecMath.h"
-#include <string>
-#include <vector>
+#include <string>       // 文字列型や文字列操作関数などが定義されているヘッダファイル
+#include <vector>       // 動的配列型"vectorクラス"が定義されているヘッダファイル
 #include <memory>
 
 // 先行宣言

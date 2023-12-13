@@ -1,10 +1,8 @@
 /**
 * @file Engine.cpp
 */
-#include "glad/glad.h"  // GLADライブラリの関数が定義されているヘッダファイル
 #include "Engine.h"
-#include <GLFW/glfw3.h> // GLFWライブラリの関数が定義されているヘッダファイル
-
+#include "../PlayerComponent.h"
 #pragma warning(push)
 #pragma warning(disable:4005)
 #include <Windows.h>    // ウィンドウズ用の関数が定義されているヘッダファイル
@@ -521,6 +519,11 @@ int Engine::Initialize()
     box1.position = { 0, 0, -1 };
 #pragma endregion
 
+#pragma region カメラ操作用コンポーネントを追加
+    auto player = Create<GameObject>("player", { 0, 10, 0 });
+    player->AddComponent<PlayerComponent>();
+#pragma endregion
+
 #pragma region ゲームオブジェクト配列の容量を予約
     gameObjects.reserve(1000);
 #pragma endregion
@@ -537,71 +540,6 @@ int Engine::Initialize()
 /// </summary>
 void Engine::Update()
 {
-    // glfwGetKey(GLFWウィンドウオブジェクトのアドレス,キー番号);
-    // GLFW_RELEASE : キー入力なし
-    // GLFW_PRESS   : キー入力あり
-    // カメラの移動
-    const float cameraSpeed = 0.0005f;
-    const float cameraCos = cos(camera.rotation.y);
-    const float cameraSin = sin(camera.rotation.y);
-    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-    {
-        camera.position.x -= cameraSpeed * cameraCos;
-        camera.position.z -= cameraSpeed * -cameraSin;
-    }
-    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-    {
-        camera.position.x += cameraSpeed * cameraCos;
-        camera.position.z += cameraSpeed * -cameraSin;
-    }
-    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-    {
-        camera.position.x -= cameraSpeed * cameraSin;
-        camera.position.z -= cameraSpeed * cameraCos;
-    }
-    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-    {
-        camera.position.x += cameraSpeed * cameraSin;
-        camera.position.z += cameraSpeed * cameraCos;
-    }
-
-    //// マウスの入力の取得
-    //double mouseX, mouseY, mouseBeforeX, mouseBeforeY;
-    //mouseBeforeX = mouseX;
-    //mouseBeforeY = mouseY;
-    //glfwGetCursorPos
-    //(
-    //  window,
-    //  &mouseX,
-    //  &mouseY
-    // );
-    //if (mouseBeforeX != mouseX)
-    //{
-    //    camera.rotation.y += 0.0005f * mouseX - mouseBeforeX;
-    //}
-    //if (mouseBeforeY != mouseY)
-    //{
-    //    camera.rotation.x += 0.0005f * mouseY - mouseBeforeY;
-    //}
-
-    // カメラの回転
-    if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
-    {
-        camera.rotation.y -= 0.0005f;
-    }
-    if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
-    {
-        camera.rotation.y += 0.0005f;
-    }
-    //if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
-    //{
-    //  camera.rotation.x += 0.0005f;
-    //}
-    //if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
-    //{
-    //  camera.rotation.x -= 0.0005f;
-    //}
-
     // デルタタイム(前回の更新からの経過時間)の計算
     // glfwGetTime : プログラムが起動してからの経過時間の取得
     const double currentTime = glfwGetTime(); // 現在時刻

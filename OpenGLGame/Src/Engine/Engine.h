@@ -3,10 +3,10 @@
 */
 #ifndef ENGINE_H_INCLUDED	// インクルードガード
 #define ENGINE_H_INCLUDED	// インクルードガード
-#include "glad/glad.h"
+#include "glad/glad.h"		// GLADライブラリの関数が定義されているヘッダファイル
 #include "GameObject.h"
-#include <GLFW/glfw3.h>
-#include <string>
+#include <GLFW/glfw3.h>		// GLFWライブラリの関数が定義されているヘッダファイル
+#include <string>			// 文字列型や文字列操作関数などが定義されているヘッダファイル
 
 /// <summary>
 /// ゲームエンジン
@@ -43,6 +43,22 @@ public:
 
 	// すべてのゲームオブジェクトを削除する
 	void ClearGameObjectAll();
+
+	// カメラを取得する
+	GameObject& GetMainCamera()
+	{
+		return camera;
+	}
+	const GameObject& GetMainCamera() const
+	{
+		return camera;
+	}
+
+	// キーが押されていたらtrue, 押されてなければfalseを返す
+	bool GetKey(int key) const
+	{
+		return glfwGetKey(window, key) == GLFW_PRESS;
+	}
 
 private:
 	int Initialize();
