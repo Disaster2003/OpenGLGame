@@ -2707,3 +2707,161 @@ box0を回転させるコードを削除して,
 ```
 
 ### 2-4.カメラ操作用のコンポーネントの追加
+プロジェクトの選択
+
+->ctrl + shift + A
+
+->プロジェクト名\Src\Engine\PlayerComponent.hを入力
+
+->追加をクリック
+
+`PlayerComponent.h`
+```diff
++/**
++* @file PlayerComponent.h
++*/
++#ifndef PLAYERCOMPONENT_H_INCLUDED
++#define PLAYERCOMPONENT_H_INCLUDED
++#include "Engine/Component.h"
++#include "Engine/Engine.h"
++
++/// <summary>
++/// プレイヤー
++/// </summary>
++class PlayerComponent
++	: public Component
++{
++public:
++	PlayerComponent() = default;
++	virtual ~PlayerComponent() = default;
++
++    virtual void Update(float deltaTime) override
++    {    
++        Engine* engine = GetOwner()->GetEngine();
++        GameObject & camera = engine->GetMainCamera();
++
++        // glfwGetKey(GLFWウィンドウオブジェクトのアドレス,キー番号);
++        // GLFW_RELEASE : キー入力なし
++        // GLFW_PRESS   : キー入力あり
++        // カメラの移動
++        const float cameraSpeed = 0.0005f;
++        const float cameraCos = cos(camera.rotation.y);
++        const float cameraSin = sin(camera.rotation.y);
++        if (engine->GetKey(GLFW_KEY_A) == GLFW_PRESS)
++        {
++            camera.position.x -= cameraSpeed * cameraCos;
++            camera.position.z -= cameraSpeed * -cameraSin;
++        }
++        if (engine->GetKey(GLFW_KEY_D) == GLFW_PRESS)
++        {
++            camera.position.x += cameraSpeed * cameraCos;
++            camera.position.z += cameraSpeed * -cameraSin;
++        }
++        if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
++        {
++            camera.position.x -= cameraSpeed * cameraSin;
++            camera.position.z -= cameraSpeed * cameraCos;
++        }
++        if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
++        {
++            camera.position.x += cameraSpeed * cameraSin;
++            camera.position.z += cameraSpeed * cameraCos;
++        }
++
++        // カメラの回転
++        if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
++        {
++            camera.rotation.y -= 0.0005f;
++        }
++        if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
++        {
++            camera.rotation.y += 0.0005f;
++        }
++    }
++};
++
++#endif // !PLAYERCOMPONENT_H_INCLUDED
+```
+
+`Engine.h`
+```diff
+ 	// すべてのゲームオブジェクトを削除する
+ 	void ClearGameObjectAll();
+ 
++	// カメラを取得する
++	GameObject& GetMainCamera()
++	{
++		return camera;
++	}
++	const GameObject& GetMainCamera() const
++	{
++		return camera;
++	}
++
++	// キーが押されていたらtrue, 押されてなければfalseを返す
++	bool GetKey(int key) const
++	{
++		return glfwGetKey(window, key) == GLFW_PRESS;
++	}
+ 
+ private:
+ 	int Initialize();
+```
+
+`Engine.cpp`
+```diff
+ /**
+ * @file Engine.cpp
+ */
+ #include "Engine.h"
++#include "../PlayerComponent.h"
+ #pragma warning(push)
+```
+```diff
+ #pragma endregion
+ 
++#pragma region カメラ操作用コンポーネントを追加
++    auto player = Create<GameObject>("player", { 0, 10, 0 });
++    player->AddComponent<PlayerComponent>();
++#pragma endregion
+ 
+ #pragma region ゲームオブジェクト配列の容量を予約
+```
+
+## 課題07
+内容
+
+PlayerComponent::Updateのエラーを
+
+全て解決しなさい.
+```diff
+         if (engine->GetKey(GLFW_KEY_D) == GLFW_PRESS)
+         {
+             camera.position.x += cameraSpeed * cameraCos;
+             camera.position.z += cameraSpeed * -cameraSin;
+         }
++        if (engine->GetKey(GLFW_KEY_W) == GLFW_PRESS)
+         {
+             camera.position.x -= cameraSpeed * cameraSin;
+             camera.position.z -= cameraSpeed * cameraCos;
+         }
++        if (engine->GetKey(GLFW_KEY_S) == GLFW_PRESS)
+         {
+             camera.position.x += cameraSpeed * cameraSin;
+             camera.position.z += cameraSpeed * cameraCos;
+         }
+ 
+         // カメラの回転
++        if (engine->GetKey(GLFW_KEY_RIGHT) == GLFW_PRESS)
+         {
+             camera.rotation.y -= 0.0005f;
+         }
++        if (engine->GetKey(GLFW_KEY_LEFT) == GLFW_PRESS)
+         {
+             camera.rotation.y += 0.0005f;
+         }
+     }
+ };
+ 
+ #endif // !PLAYERCOMPONENT_H_INCLUDED
+```
