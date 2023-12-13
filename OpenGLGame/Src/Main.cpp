@@ -2,7 +2,7 @@
 * @file Main.cpp
 */
 #include "Engine/Engine.h"
-
+#include "MainGameScene.h"
 #pragma warning(push)
 #pragma warning(disable:4005)
 #include <Windows.h>    // ウィンドウズ用の関数が定義されているヘッダファイル
@@ -20,5 +20,6 @@ int WINAPI WinMain
 )
 {
     Engine engine;
+    engine.SetNextScene<MainGameScene>();
     return engine.Run();
 }

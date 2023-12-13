@@ -532,6 +532,10 @@ int Engine::Initialize()
     tex = LoadTexture("Res/box.tga");
 #pragma endregion
 
+    // カメラの初期設定
+    camera.position = { 3, 1, 3 };
+    camera.rotation.y = 3.14159265f;
+
     return 0; // 正常に初期化された
 }
 
@@ -550,6 +554,23 @@ void Engine::Update()
     if (deltaTime >= 0.5f)
     {
         deltaTime = 1.0f / 60.0f;
+    }
+
+    // シーンの切り替え
+    if (nextScene)
+    {
+        if (scene)
+        {
+            scene->Finalize(*this);
+        }
+        nextScene->Initialize(*this);
+        scene = std::move(nextScene);
+    }
+
+    // シーンを更新
+    if (scene)
+    {
+        scene->Update(*this, deltaTime);
     }
 
     UpdateGameObject(deltaTime);

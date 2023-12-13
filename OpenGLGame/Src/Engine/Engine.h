@@ -5,6 +5,7 @@
 #define ENGINE_H_INCLUDED	// インクルードガード
 #include "glad/glad.h"		// GLADライブラリの関数が定義されているヘッダファイル
 #include "GameObject.h"
+#include "Scene.h"
 #include <GLFW/glfw3.h>		// GLFWライブラリの関数が定義されているヘッダファイル
 #include <string>			// 文字列型や文字列操作関数などが定義されているヘッダファイル
 
@@ -44,6 +45,13 @@ public:
 	// すべてのゲームオブジェクトを削除する
 	void ClearGameObjectAll();
 
+	// 次のシーンを設定する
+	template<typename T>
+	void SetNextScene()
+	{
+		nextScene = std::make_shared<T>();
+	}
+
 	// カメラを取得する
 	GameObject& GetMainCamera()
 	{
@@ -78,6 +86,8 @@ private:
 	GameObjectList gameObjects;				// ゲームオブジェクト配列
 	double previousTime = 0;				// 前回更新時の時刻
 	float deltaTime = 0;					// 前回更新からの経過時間
+	ScenePtr scene;							// 実行中のシーン
+	ScenePtr nextScene;						// 次のシーン
 	GLuint tex = 0;							// テクスチャ
 
 	GameObject camera;						// カメラオブジェクト

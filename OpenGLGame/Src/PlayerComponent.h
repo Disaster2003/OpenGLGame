@@ -25,7 +25,7 @@ public:
         // GLFW_RELEASE : キー入力なし
         // GLFW_PRESS   : キー入力あり
         // カメラの移動
-        const float cameraSpeed = 0.0005f;
+        const float cameraSpeed = 0.003f;
         const float cameraCos = cos(camera.rotation.y);
         const float cameraSin = sin(camera.rotation.y);
         if (engine->GetKey(GLFW_KEY_A) == GLFW_PRESS)

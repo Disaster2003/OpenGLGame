@@ -138,7 +138,6 @@
     <Text Include="..\授業進行度.txt" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\4thREADME.md" />
     <None Include="..\5thREADME.md" />
     <None Include="packages.config" />
     <None Include="Res\standard.frag" />
@@ -149,14 +148,17 @@
     <ClCompile Include="Src\Engine\GameObject.cpp" />
     <ClCompile Include="Src\glad\src\glad.c" />
     <ClCompile Include="Src\Main.cpp" />
+    <ClCompile Include="Src\MainGameScene.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\Engine\Component.h" />
     <ClInclude Include="Src\Engine\Engine.h" />
     <ClInclude Include="Src\Engine\GameObject.h" />
+    <ClInclude Include="Src\Engine\Scene.h" />
     <ClInclude Include="Src\Engine\VecMath.h" />
     <ClInclude Include="Src\glad\include\glad\glad.h" />
     <ClInclude Include="Src\glad\include\KHR\khrplatform.h" />
+    <ClInclude Include="Src\MainGameScene.h" />
     <ClInclude Include="Src\PlayerComponent.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
