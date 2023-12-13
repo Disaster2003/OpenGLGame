@@ -2219,3 +2219,8 @@ private:
 public関数やfriend指定が必要
 
 ->バグの可能性 減
+
+### 2-2.ゲームオブジェクトクラスの拡張
+`GameObject.h`
+```diff
+```
