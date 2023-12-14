@@ -6,6 +6,7 @@
 #include "glad/glad.h"		// GLADライブラリの関数が定義されているヘッダファイル
 #include "GameObject.h"
 #include "Scene.h"
+#include "Mesh.h"
 #include <GLFW/glfw3.h>		// GLFWライブラリの関数が定義されているヘッダファイル
 #include <string>			// 文字列型や文字列操作関数などが定義されているヘッダファイル
 
@@ -83,6 +84,9 @@ private:
 	GLuint vbo = 0;							// 頂点バッファの管理番号
 	GLuint ibo = 0;							// インデックスバッファの管理番号
 	GLuint vao = 0;							// 頂点属性配列の管理番号
+	GLintptr vboSize = 0;					// 頂点バッファの現在のサイズ
+	GLintptr iboSize = 0;					// インデックスバッファの現在のサイズ
+	std::vector<DrawParams> drawParamsList;	// 描画パラメータ配列
 	GameObjectList gameObjects;				// ゲームオブジェクト配列
 	double previousTime = 0;				// 前回更新時の時刻
 	float deltaTime = 0;					// 前回更新からの経過時間

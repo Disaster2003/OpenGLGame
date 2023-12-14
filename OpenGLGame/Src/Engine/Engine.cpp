@@ -11,6 +11,14 @@
 #include <fstream>      // ifstreamクラスが定義されているヘッダファイル
 #include <filesystem>   // filesystem名前空間が定義されているヘッダファイル
 
+#include <fstream>
+#include <filesystem>
+#include <stdio.h>
+
+// 図形データ
+#include "../../Res/MeshData/crystal_mesh.h"
+#include "../../Res/MeshData/wall_mesh.h"
+
 /// <summary>
 /// OpenGLからのメッセージを処理するコールバック関数
 /// </summary>
@@ -262,11 +270,6 @@ int Engine::Initialize()
 
 #pragma region 頂点データをGPUメモリにコピー
     // 頂点データ(x,y,z座標が-1~+1の座標系における座標)
-    struct Vertex
-    {
-        vec3 position; // 頂点座標
-        vec2 texcoord; // テクスチャ座標
-    };
     const Vertex vertexData[] =
     {
         // +Z(手前の面)
@@ -316,10 +319,10 @@ int Engine::Initialize()
     // GPUメモリの確保のみ
     glNamedBufferStorage
     (
-        vbo,                // 頂点バッファの管理番号
-        sizeof(vertexData), // コピーするバイト数
-        vertexData,         // コピーするデータのアドレス
-        0                   // 各種フラグ
+        vbo,                    // 頂点バッファの管理番号
+        sizeof(Vertex)*10'000,  // コピーするバイト数(1万頂点までOK)
+        nullptr,                // コピーするデータのアドレス
+        0                       // 各種フラグ
     );
 #pragma endregion
 
@@ -346,11 +349,92 @@ int Engine::Initialize()
     // GPUメモリの確保のみ
     glNamedBufferStorage
     (
-        ibo,               // インデックスバッファの管理番号
-        sizeof(indexData), // コピーするバイト数
-        indexData,         // コピーするデータのアドレス
-        0                  // 各種フラグ
+        ibo,                        // インデックスバッファの管理番号
+        sizeof(uint16_t)*40'000,    // コピーするバイト数(4万インデックスまでOK)
+        nullptr,                    // コピーするデータのアドレス
+        0                           // 各種フラグ
     );
+#pragma endregion
+
+#pragma region 図形データの情報
+    struct MeshData
+    {
+        size_t vertexSize;      // 頂点データのバイト数
+        size_t indexSize;       // インデックスデータのバイト数
+        const void* vertexData; // 頂点データのアドレス
+        const void* indexData;  // インデックスデータのアドレス
+    };
+    const MeshData meshes[] =
+    {
+      { sizeof(vertexData), sizeof(indexData), vertexData, indexData },
+      { sizeof(crystal_vertices), sizeof(crystal_indices),crystal_vertices, crystal_indices },
+      { sizeof(wall_vertices), sizeof(wall_indices),wall_vertices, wall_indices },
+    };
+    // 図形データから描画パラメータを作成し、データをGPUメモリにコピーする
+    drawParamsList.reserve(std::size(meshes));
+    for (const auto& e : meshes)
+    {
+        // 図形データをGPUメモリにコピー
+        GLuint tmp[2];  // 一時的なバッファ
+        // コピーするデータを入れる一時的なGPU側バッファを作成
+        glCreateBuffers
+        (
+            2,     // 作成するオブジェクト数
+            tmp    // 頂点バッファの管理番号
+        );
+        // 作成した一時的なGPU側バッファに,CPU側にあるデータをコピー
+        glNamedBufferStorage
+        (
+            tmp[0],        // 一時的なバッファの管理番号
+            e.vertexSize,  // コピーするバイト数
+            e.vertexData,  // コピーするデータのアドレス
+            0              // 各種フラグ
+        );
+        // 作成した一時的なGPU側バッファに,CPU側にあるデータをコピー
+        glNamedBufferStorage
+        (
+            tmp[1],       // 一時的なバッファの管理番号
+            e.indexSize,  // コピーするバイト数
+            e.indexData,  // コピーするデータのアドレス
+            0             // 各種フラグ
+        );
+        // 一時的なバッファから,既存のバッファにコピー
+        glCopyNamedBufferSubData
+        (
+            tmp[0],         // コピー元バッファの管理番号
+            vbo,            // コピー先バッファの管理番号
+            0,              // コピー元の読み取り開始位置
+            vboSize,        // コピー先の書き込み開始位置
+            e.vertexSize    // コピーするバイト数
+        );
+        // 一時的なバッファから,既存のバッファにコピー
+        glCopyNamedBufferSubData
+        (
+            tmp[1],         // コピー元バッファの
+            ibo,            // コピー先バッファの
+            0,              // コピー元の読み取り
+            iboSize,        // コピー先の書き込み
+            e.indexSize     // コピーするバイト数
+        );
+        // 一時的なバッファの削除
+        glDeleteBuffers
+        (
+            2,     // 削除するオブジェクト数
+            tmp    // 一時的なバッファの管理番号
+        );
+
+        // 描画パラメータを作成
+        DrawParams params;
+        params.mode = GL_TRIANGLES;
+        params.count = static_cast<GLsizei>(e.indexSize / sizeof(uint16_t));
+        params.indices = reinterpret_cast<void*>(iboSize);
+        params.baseVertex = static_cast<GLint>(vboSize / sizeof(Vertex));
+        drawParamsList.push_back(params); // 描画パラメータを配列に追加
+
+        // バッファの現在のサイズを更新
+        vboSize += e.vertexSize;
+        iboSize += e.indexSize;
+    }
 #pragma endregion
 
 #pragma region 頂点データ形式の設定
@@ -572,6 +656,12 @@ void Engine::Render()
     // ゲームオブジェクトを描画
     for (const auto& e : gameObjects)
     {
+        // 図形番号がリストにない場合は描画しない
+        if (e->meshId < 0 || e->meshId >= drawParamsList.size())
+        {
+            continue;
+        }
+
         // ユニフォーム変数にデータワット
         glProgramUniform4fv
         (
@@ -616,13 +706,15 @@ void Engine::Render()
         }
 
         // 図形の描画
-        glDrawElementsInstanced
+        const DrawParams& params = drawParamsList[e->meshId];
+        glDrawElementsInstancedBaseVertex
         (
-            GL_TRIANGLES,       // 基本図形の種類
-            indexCount,         // インデックスデータ数
+            params.mode,        // 図形の種類
+            params.count,       // インデックスデータ数
             GL_UNSIGNED_SHORT,  // インデックスデータの型
-            0,                  // インデックスデータの開始位置
-            1                   // 描画する図形の数
+            params.indices,     // インデックスデータの開始位置
+            1,                  // 描画する図形の数
+            params.baseVertex   // インデックス0とみなす頂点データの位置
         );
     }
 

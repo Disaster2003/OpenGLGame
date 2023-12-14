@@ -71,6 +71,7 @@ public:
     vec3 scale = { 1,1,1 };             // 物体の拡大率
     float color[4] = { 1, 1, 1, 1 };    // 物体の色
     TexturePtr texColor;                // 表示に使うカラーテクスチャ
+    int meshId = -1;                    // 表示する図形の番号
 
 private:
     Engine* engine = nullptr;             // エンジンのアドレス

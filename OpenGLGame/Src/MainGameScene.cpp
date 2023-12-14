@@ -42,9 +42,11 @@ bool MainGameScene::Initialize(Engine& engine)
       static_cast<float>(mapSizeY) * squareScale };
     floor->position = { floor->scale.x, -1, floor->scale.z };
     floor->texColor = std::make_shared<Texture>("Res/floor.tga");
+    floor->meshId = 0;
 
     // 壁を作成
     auto texWall = std::make_shared<Texture>("Res/wall.tga");
+    auto texCrystalBlue = std::make_shared<Texture>("Res/MeshData/crystal_blue.tga");
     for (int y = 0; y < mapSizeY; ++y)
     {
         for (int x = 0; x < mapSizeX; ++x)
@@ -54,9 +56,18 @@ bool MainGameScene::Initialize(Engine& engine)
             if (GetMapData(x, y) == '#')
             {
                 auto wall = engine.Create<GameObject>(
-                    "wall", { posX, 0.5f * squareSize, posZ });
+                    "wall", { posX, 0, posZ });
                 wall->scale = { squareScale, squareScale, squareScale };
                 wall->texColor = texWall;
+                wall->meshId = 2;
+            }
+            else if (GetMapData(x, y) == 'C')
+            {
+                // クリスタルを配置
+                auto crystal = engine.Create<GameObject>("crystal", { posX, 1, posZ });
+                crystal->scale = { 0.5f, 0.5f, 0.5f };
+                crystal->texColor = texCrystalBlue;
+                crystal->meshId = 1;
             }
         } // for x
     } // for y
