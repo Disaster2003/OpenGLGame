@@ -88,7 +88,6 @@ private:
 	float deltaTime = 0;					// 前回更新からの経過時間
 	ScenePtr scene;							// 実行中のシーン
 	ScenePtr nextScene;						// 次のシーン
-	GLuint tex = 0;							// テクスチャ
 
 	GameObject camera;						// カメラオブジェクト
 	GLsizei indexCount = 0;

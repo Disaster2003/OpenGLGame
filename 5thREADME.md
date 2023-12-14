@@ -166,6 +166,12 @@ using ScenePtr = std::shared_ptr<Scene>; // シーンポインタ型
  {
 ```
 
+[maze00.txt](https://github.com/tn-mai/OpenGL3D2023/tree/main/res)
+
+maze00.txtを
+
+プロジェクト名\Resにダウンロード
+
 プロジェクトの選択
 
 ->ctrl + shift + A

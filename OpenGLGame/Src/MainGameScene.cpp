@@ -41,10 +41,10 @@ bool MainGameScene::Initialize(Engine& engine)
       static_cast<float>(mapSizeX) * squareScale, 1,
       static_cast<float>(mapSizeY) * squareScale };
     floor->position = { floor->scale.x, -1, floor->scale.z };
-    floor->color[0] = 0.4f;
-    floor->color[2] = 0.2f;
+    floor->texColor = std::make_shared<Texture>("Res/floor.tga");
 
     // ï«ÇçÏê¨
+    auto texWall = std::make_shared<Texture>("Res/wall.tga");
     for (int y = 0; y < mapSizeY; ++y)
     {
         for (int x = 0; x < mapSizeX; ++x)
@@ -56,6 +56,7 @@ bool MainGameScene::Initialize(Engine& engine)
                 auto wall = engine.Create<GameObject>(
                     "wall", { posX, 0.5f * squareSize, posZ });
                 wall->scale = { squareScale, squareScale, squareScale };
+                wall->texColor = texWall;
             }
         } // for x
     } // for y

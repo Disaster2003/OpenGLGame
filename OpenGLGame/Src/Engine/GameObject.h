@@ -4,6 +4,7 @@
 #ifndef GAMEOBJECT_H_INCLUDED
 #define GAMEOBJECT_H_INCLUDED
 #include "Component.h"
+#include "Texture.h"
 #include "VecMath.h"
 #include <string>       // 文字列型や文字列操作関数などが定義されているヘッダファイル
 #include <vector>       // 動的配列型"vectorクラス"が定義されているヘッダファイル
@@ -69,6 +70,7 @@ public:
     vec3 rotation = { 0, 0, 0 };        // 物体の回転角度
     vec3 scale = { 1,1,1 };             // 物体の拡大率
     float color[4] = { 1, 1, 1, 1 };    // 物体の色
+    TexturePtr texColor;                // 表示に使うカラーテクスチャ
 
 private:
     Engine* engine = nullptr;             // エンジンのアドレス
