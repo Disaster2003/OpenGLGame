@@ -44,7 +44,7 @@ Texture::Texture(const char* filename)
     }
 
     // ファイルサイズの取得
-  // 引数 : ファイルパス
+    // 引数 : ファイルパス
     const size_t filesize = std::filesystem::file_size(filename);
     // ファイルサイズ分の領域を用意
     std::vector<uint8_t> buffer(filesize);

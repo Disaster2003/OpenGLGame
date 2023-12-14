@@ -35,7 +35,7 @@ bool MainGameScene::Initialize(Engine& engine)
         } // for x
     } // for y
 
-   // °‚ğì¬
+    // °‚ğì¬
     auto floor = engine.Create<GameObject>("floor");
     floor->scale = {
       static_cast<float>(mapSizeX) * squareScale, 1,
