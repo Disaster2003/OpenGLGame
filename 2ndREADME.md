@@ -115,13 +115,13 @@ GLSLはC言語をベースにして,
 ### 2-1.シェーダの記述
 ctrl+shift+A
 
-->`プロジェクト名\Res\standard.vert`
+->`プロジェクト名/Res/standard.vert`
 
 ->`追加`をクリック
 
 ->shift+alt+A
 
-->`Res\standard.vert`をクリック
+->`Res/standard.vert`をクリック
 
 ->`追加`をクリック
 
@@ -152,13 +152,13 @@ ctrl+shift+A
 
 ctrl+shift+A
 
-->`プロジェクト名\Res\standard.frag`
+->`プロジェクト名/Res/standard.frag`
 
 ->`追加`をクリック
 
 ->shift+alt+A
 
-->`Res\standard.frag`をクリック
+->`Res/standard.frag`をクリック
 
 ->`追加`をクリック
 
@@ -537,11 +537,11 @@ box.pngをダウンロード
 
 ->VisualStudioにドラッグ&ドロップ
 
-->`ファイル\名前を付けて保存`
+->`ファイル/名前を付けて保存`
 
 ->ファイルの種類を`TGAファイル(*.tga)`にして
 
-->プロジェクト名\Resに保存
+->プロジェクト名/Resに保存
 
 ### 3-2.テクスチャの表示
 `Main.cpp`

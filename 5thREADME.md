@@ -25,9 +25,9 @@
 
 ->ctrl + shift + A
 
-->プロジェクト名\Src\Engine\Scene.hを入力
+->`プロジェクト名/Src/Engine/Scene.h`を入力
 
-->追加をクリック
+->`追加`をクリック
 
 `Scene.h`
 ```diff
@@ -171,15 +171,16 @@ using ScenePtr = std::shared_ptr<Scene>; // シーンポインタ型
 
 maze00.txtを
 
-プロジェクト名\Resにダウンロード
+`プロジェクト名/Res`にダウンロード
+
 
 プロジェクトの選択
 
 ->ctrl + shift + A
 
-->プロジェクト名\Src\MainGameScene.hを入力
+->`プロジェクト名/Src/MainGameScene.h`を入力
 
-->追加をクリック
+->`追加`をクリック
 
 `MainGameScene.h`
 ```diff
@@ -225,9 +226,9 @@ maze00.txtを
 
 ->ctrl + shift + A
 
-->プロジェクト名\Src\MainGameScene.cppを入力
+->`プロジェクト名/Src/MainGameScene.cpp`を入力
 
-->追加をクリック
+->`追加`をクリック
 
 `MainGameScene.cpp`
 ```diff
@@ -329,9 +330,9 @@ maze00.txtを
 
 ->ctrl + shift + A
 
-->プロジェクト名\Src\Engine\Texture.hを入力
+->`プロジェクト名/Src/Engine/Texture.h`を入力
 
-->追加をクリック
+->`追加`をクリック
 
 `Texture.h`
 ```diff
@@ -518,9 +519,9 @@ Texutreクラスの定義でコピーと代入を
 
 ->ctrl + shift + A
 
-->プロジェクト名\Src\Engine\Texture.cppを入力
+->`プロジェクト名/Src/Engine/Texture.cpp`を入力
 
-->追加をクリック
+->`追加`をクリック
 
 `Texture.cpp`
 ```diff
@@ -683,17 +684,15 @@ Resフォルダに保存しなさい.
 
 [res](https://github.com/tn-mai/OpenGL3D2023/tree/main/res/)
 
-```C++
 floor.pngとwall.pngをダウンロード
 
 ->VisualStudioにドラッグ&ドロップ
 
-->ファイル\名前を付けて保存
+->ファイル/名前を付けて保存
 
-->ファイルの種類をTGAファイル(*.tga)にして
+->ファイルの種類を`TGAファイル(*.tga)`にして
 
-->プロジェクト名\Resに保存
-```
+->`プロジェクト名/Res`に保存
 
 `MainGameScene.cpp`
 ```diff
@@ -795,3 +794,23 @@ Engineクラスのtexメンバ変数と,
 ```
 
 ## 3.複数の図形を表示
+OpenGLで多数の図形を扱う方法
+>1. ひとつのバッファに複数の図形を格納し,<br>
+図形ごとに異なる描画パラメータを使う.
+>2. 図形ごとにバッファを作成し,<br>
+描画する際にバッファを切り替える.
+
+1の方がバッファを切り替える頻度が少なく,
+
+GPUの速度低下を防げる.
+
+
+プロジェクトの選択
+
+->ctrl + shift + A
+
+->`プロジェクト名/Src/Engine/Mesh.h`を入力
+
+->`追加`をクリック
+
+`Mesh.h`

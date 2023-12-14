@@ -59,9 +59,9 @@
 
 ->ctrl + shift + A
 
-->プロジェクト名\Src\Engine\Engine.hを入力
+->`プロジェクト名/Src/Engine/Engine.h`を入力
 
-->追加をクリック
+->`追加`をクリック
 
 `Engine.h`
 ```diff
@@ -131,9 +131,9 @@
 
 ->ctrl + shift + A
 
-->プロジェクト名\Src\Engine\Engine.cppを入力
+->`プロジェクト名/Src/Engine/Engine.cpp`を入力
 
-->追加をクリック
+->`追加`をクリック
 
 `Engine.cpp`
 ```diff
@@ -313,9 +313,9 @@ Main.cppの
 
 ->ctrl + shift + A
 
-->プロジェクト名\Src\Engine\VecMath.hを入力
+->`プロジェクト名/Src/Engine/VecMath.h`を入力
 
-->追加をクリック
+->`追加`をクリック
 
 `VecMath.h`
 ```diff
@@ -2127,9 +2127,9 @@ Main.cppのインクルード文について,
 
 ->ctrl + shift + A
 
-->プロジェクト名\Src\Engine\Component.hを入力
+->`プロジェクト名/Src/Engine/Component.h`を入力
 
-->追加をクリック
+->`追加`をクリック
 
 `Component.h`
 ```diff
@@ -2233,9 +2233,9 @@ public関数やfriend指定が必要
 
 ->ctrl + shift + A
 
-->プロジェクト名\Src\Engine\GameObject.hを入力
+->`プロジェクト名/Src/Engine/GameObject.h`を入力
 
-->追加をクリック
+->`追加`をクリック
 
 `GameObject.h`
 ```diff
@@ -2324,9 +2324,9 @@ public関数やfriend指定が必要
 
 ->ctrl + shift + A
 
-->プロジェクト名\Src\Engine\GameObject.cppを入力
+->`プロジェクト名/Src/Engine/GameObject.cpp`を入力
 
-->追加をクリック
+->`追加`をクリック
 
 `GameObject.cpp`
 ```diff
@@ -2711,9 +2711,9 @@ box0を回転させるコードを削除して,
 
 ->ctrl + shift + A
 
-->プロジェクト名\Src\PlayerComponent.hを入力
+->`プロジェクト名/Src/PlayerComponent.h`を入力
 
-->追加をクリック
+->`追加`をクリック
 
 `PlayerComponent.h`
 ```diff
