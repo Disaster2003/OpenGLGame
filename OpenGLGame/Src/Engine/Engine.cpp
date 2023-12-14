@@ -11,10 +11,6 @@
 #include <fstream>      // ifstreamクラスが定義されているヘッダファイル
 #include <filesystem>   // filesystem名前空間が定義されているヘッダファイル
 
-#include <fstream>
-#include <filesystem>
-#include <stdio.h>
-
 // 図形データ
 #include "../../Res/MeshData/crystal_mesh.h"
 #include "../../Res/MeshData/wall_mesh.h"

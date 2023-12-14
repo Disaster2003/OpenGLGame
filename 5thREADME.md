@@ -805,6 +805,19 @@ OpenGLで多数の図形を扱う方法
 GPUの速度低下を防げる.
 
 
+`Engine.cpp`
+```diff
+ #pragma region 頂点データをGPUメモリにコピー
+     // 頂点データ(x,y,z座標が-1~+1の座標系における座標)
+-    struct Vertex
+-    {
+-        vec3 position; // 頂点座標
+-        vec2 texcoord; // テクスチャ座標
+-    };
+     const Vertex vertexData[] =
+     {
+```
+
 プロジェクトの選択
 
 ->ctrl + shift + A
@@ -814,3 +827,373 @@ GPUの速度低下を防げる.
 ->`追加`をクリック
 
 `Mesh.h`
+```diff
++/**
++* @file Mesh.h
++*/
++#ifndef MESH_H_INCLUDED
++#define MESH_H_INCLUDED
++#include "glad/glad.h"
++#include "VecMath.h"
++
++/// <summary>
++/// 頂点データ形式
++/// </summary>
++struct Vertex
++{
++	vec3 position; // 頂点座標
++	vec2 texcoord; // テクスチャ座標
++};
++
++/// <summary>
++/// 描画パラメータ
++/// </summary>
++struct DrawParams
++{
++	GLenum mode = GL_TRIANGLES; // プリミティブの種類
++	GLsizei count = 0;          // 描画するインデックス数
++	const void* indices = 0;    // 描画開始インデックスのバイトオフセット
++	GLint baseVertex = 0;       // インデックス0となる頂点配列内の位置
++};
++
++#endif // MESH_H_INCLUDED
+```
+
+`Engine.h`
+```diff
+ /**
+ * @file Engine.h
+ */
+ #ifndef ENGINE_H_INCLUDED	// インクルードガード
+ #define ENGINE_H_INCLUDED	// インクルードガード
+ #include "glad/glad.h"		// GLADライブラリの関数が定義されているヘッダファイル
+ #include "GameObject.h"
+ #include "Scene.h"
++#include "Mesh.h"
+ #include <GLFW/glfw3.h>	// GLFWライブラリの関数が定義されているヘッダファイル
+ #include <string>			// 文字列型や文字列操作関数などが定義されているヘッダファイル
+```
+```diff
+ GLFWwindow* window = nullptr;              // ウィンドウオブジェクト
+ const std::string title = "OpenGLGame";    // ウィンドウタイトル
+ GLuint vs = 0;							    // 頂点シェーダの管理番号
+ GLuint fs = 0;							    // フラグメントシェーダの管理番号
+ GLuint prog3D = 0;						    // シェーダプログラムの管理番号
+ GLuint vbo = 0;							// 頂点バッファの管理番号
+ GLuint ibo = 0;							// インデックスバッファの管理番号
+ GLuint vao = 0;							// 頂点属性配列の管理番号
++GLintptr vboSize = 0;					    // 頂点バッファの現在のサイズ
++GLintptr iboSize = 0;					    // インデックスバッファの現在のサイズ
++std::vector<DrawParams> drawParamsList;	// 描画パラメータ配列
+ GameObjectList gameObjects;				// ゲームオブジェクト配列
+ double previousTime = 0;				    // 前回更新時の時刻
+ float deltaTime = 0;					    // 前回更新からの経過時間
+ ScenePtr scene;							// 実行中のシーン
+ ScenePtr nextScene;						// 次のシーン
+```
+
+`GameObject.h`
+```diff
+     std::string name;                   // オブジェクト名
+     vec3 position = { 0, 0, 0 };        // 物体の位置
+     vec3 rotation = { 0, 0, 0 };        // 物体の回転角度
+     vec3 scale = { 1,1,1 };             // 物体の拡大率
+     float color[4] = { 1, 1, 1, 1 };    // 物体の色
+     TexturePtr texColor;                // 表示に使うカラーテクスチャ
++    int meshId = -1;                    // 表示する図形の番号
+ 
+ private:
+     Engine* engine = nullptr;             // エンジンのアドレス
+     bool isDestroyed = false;             // 死亡フラグ
+     std::vector<ComponentPtr> components; // コンポーネント配列
+ };
+```
+
+## 課題03
+内容
+
+下記のURLからcrystal_mesh.hと
+
+crystal_blue.pngをダウンロードし,
+
+Res/MeshDataフォルダに保存しなさい.
+
+PNGファイルはTGAファイルに変換すること.
+
+[MeshData](https://github.com/tn-mai/OpenGL3D2023/tree/master/res/meshdata)
+
+crystal_mesh.hとcrystal_blue.pngをダウンロード
+
+->crystal_blue.pngをVisualStudioにドラッグ&ドロップ
+
+->ファイル/名前を付けて保存
+
+->ファイルの種類を`TGAファイル(*.tga)`にして
+
+->`プロジェクト名/Res/MeshData`に保存
+
+`Engine.cpp`
+```diff
+ #include <fstream>      // ifstreamクラスが定義されているヘッダファイル
+ #include <filesystem>   // filesystem名前空間が定義されているヘッダファイル
+ 
++// 図形データ
++#include "../../Res/MeshData/crystal_mesh.h"
+ 
+ /// <summary>
+ /// OpenGLからのメッセージを処理するコールバック関数
+ /// </summary>
+ /// <param name="source">メッセージの発信者(OpenGL,Windows,シェーダなど)</param>
+ /// <param name="type">メッセージの種類(エラー,警告など)</param>
+ /// <param name="id">メッセージを一位に識別する値</param>
+ /// <param name="severity">メッセージの重要度(高,中,低,最低)</param>
+ /// <param name="length">メッセージの文字数. 負数ならメッセージは0終端されている</param>
+ /// <param name="message">メッセージ本体</param>
+ /// <param name="userParam">コールバック設定時に指定したポインタ</param>
+ void APIENTRY DebugCallback
+ (
+```
+```diff
+     // バッファオブジェクト(GPUメモリを管理するためのオブジェクト)の作成
+     glCreateBuffers
+     (
+         1,      // 作成するオブジェクト数
+         &vbo    // 頂点バッファの管理番号を格納する配列
+     );
+     // GPUメモリを確保のち,データをコピー
+     // データのアドレスがnullptrなら,
+     // GPUメモリの確保のみ
+     glNamedBufferStorage
+     (
+         vbo,                    // 頂点バッファの管理番号
++        sizeof(Vertex)*10'000,  // コピーするバイト数(1万頂点までOK)
++        nullptr,                // コピーするデータのアドレス
+         0                       // 各種フラグ
+     );
+ #pragma endregion
+ 
+ #pragma region インデックスデータをGPUメモリにコピー
+     // インデックスデータ(図形を構成する頂点番号)
+     const GLushort indexData[] =
+     {
+         0, 1, 2, 2, 3, 0,
+         4, 5, 6, 6, 7, 4,
+         8, 9,10,10,11, 8,
+         12,13,14,14,15,12,
+         16, 17,18,18,19, 16,
+         20,21,22,22,23,20,
+     };
+     indexCount = static_cast<GLsizei>(std::size(indexData));  // インデックス数
+     // バッファオブジェクト(GPUメモリを管理するためのオブジェクト)の作成
+     glCreateBuffers
+     (
+         1,      // 作成するオブジェクト数
+         &ibo    // インデックスバッファの管理番号
+     );
+     // GPUメモリを確保のち,データをコピー
+     // データのアドレスがnullptrなら,
+     // GPUメモリの確保のみ
+     glNamedBufferStorage
+     (
+         ibo,                        // インデックスバッファの管理番号
++        sizeof(uint16_t)*40'000,    // コピーするバイト数(4万インデックスまでOK)
++        nullptr,                    // コピーするデータのアドレス
+         0                           // 各種フラグ
+     );
+ #pragma endregion
+ 
++#pragma region 図形データの情報
++    struct MeshData
++    {
++        size_t vertexSize;      // 頂点データのバイト数
++        size_t indexSize;       // インデックスデータのバイト数
++        const void* vertexData; // 頂点データのアドレス
++        const void* indexData;  // インデックスデータのアドレス
++    };
++    const MeshData meshes[] =
++    {
++      { sizeof(vertexData), sizeof(indexData), vertexData, indexData },
++      { sizeof(crystal_vertices), sizeof(crystal_indices),crystal_vertices, crystal_indices },
++      { sizeof(wall_vertices), sizeof(wall_indices),wall_vertices, wall_indices },
++    };
++    // 図形データから描画パラメータを作成し、データをGPUメモリにコピーする
++    drawParamsList.reserve(std::size(meshes));
++    for (const auto& e : meshes)
++    {
++        // 図形データをGPUメモリにコピー
++        GLuint tmp[2];  // 一時的なバッファ
++        // コピーするデータを入れる一時的なGPU側バッファを作成
++        glCreateBuffers
++        (
++            2,     // 作成するオブジェクト数
++            tmp    // 頂点バッファの管理番号
++        );
++        // 作成した一時的なGPU側バッファに,CPU側にあるデータをコピー
++        glNamedBufferStorage
++        (
++            tmp[0],        // 一時的なバッファの管理番号
++            e.vertexSize,  // コピーするバイト数
++            e.vertexData,  // コピーするデータのアドレス
++            0              // 各種フラグ
++        );
++        // 作成した一時的なGPU側バッファに,CPU側にあるデータをコピー
++        glNamedBufferStorage
++        (
++            tmp[1],       // 一時的なバッファの管理番号
++            e.indexSize,  // コピーするバイト数
++            e.indexData,  // コピーするデータのアドレス
++            0             // 各種フラグ
++        );
++        // 一時的なバッファから,既存のバッファにコピー
++        glCopyNamedBufferSubData
++        (
++            tmp[0],         // コピー元バッファの管理番号
++            vbo,            // コピー先バッファの管理番号
++            0,              // コピー元の読み取り開始位置
++            vboSize,        // コピー先の書き込み開始位置
++            e.vertexSize    // コピーするバイト数
++        );
++        // 一時的なバッファから,既存のバッファにコピー
++        glCopyNamedBufferSubData
++        (
++            tmp[1],         // コピー元バッファの
++            ibo,            // コピー先バッファの
++            0,              // コピー元の読み取り
++            iboSize,        // コピー先の書き込み
++            e.indexSize     // コピーするバイト数
++        );
++        // 一時的なバッファの削除
++        glDeleteBuffers
++        (
++            2,     // 削除するオブジェクト数
++            tmp    // 一時的なバッファの管理番号
++        );
++
++        // 描画パラメータを作成
++        DrawParams params;
++        params.mode = GL_TRIANGLES;
++        params.count = static_cast<GLsizei>(e.indexSize / sizeof(uint16_t));
++        params.indices = reinterpret_cast<void*>(iboSize);
++        params.baseVertex = static_cast<GLint>(vboSize / sizeof(Vertex));
++        drawParamsList.push_back(params); // 描画パラメータを配列に追加
++
++        // バッファの現在のサイズを更新
++        vboSize += e.vertexSize;
++        iboSize += e.indexSize;
++    }
++#pragma endregion
+ 
+ #pragma region 頂点データ形式の設定
+```
+
+`MainGameScene.cpp`
+```diff
+ floor->position = { floor->scale.x, -1, floor->scale.z };
+ floor->texColor = std::make_shared<Texture>("Res/floor.tga");
++floor->meshId = 0;
+ 
+ // 壁を作成
+ auto texWall = std::make_shared<Texture>("Res/wall.tga");
++auto texCrystalBlue = std::make_shared<Texture>("Res/MeshData/crystal_blue.tga");
+ for (int y = 0; y < mapSizeY; ++y)
+ {
+     for (int x = 0; x < mapSizeX; ++x)
+     {
+         const float posX = static_cast<float>(x + 0.5) * squareSize;
+         const float posZ = static_cast<float>(y + 0.5) * squareSize;
+         if (GetMapData(x, y) == '#')
+         {
+             auto wall = engine.Create<GameObject>(
+                 "wall", { posX, 0.5 * squareSize, posZ });
+             wall->scale = { squareScale, squareScale, squareScale };
+             wall->texColor = texWall;
+             wall->meshId = 0;
++        }
++        else if (GetMapData(x, y) == 'C')
++        {
++            // クリスタルを配置
++            auto crystal = engine.Create<GameObject>("crystal", { posX, 1, posZ });
++            crystal->scale = { 0.5f, 0.5f, 0.5f };
++            crystal->texColor = texCrystalBlue;
++            crystal->meshId = 1;
++        }
+     } // for x
+ } // for y
+```
+
+## 課題04
+内容
+
+下記のURLからwall_mesh.hをダウンロードし,
+
+図形データをEngine::Initializeメンバ関数の
+
+meshes配列に追加しなさい。
+
+追加した図形の番号を,
+
+壁(#)のmeshIdに設定しなさい.
+
+Y方向に1単位ずれて表示されます.
+
+壁を配置するY座標を0に変更して
+
+「ずれ」を解消しなさい.
+
+`Engine.cpp`
+```diff
+ #include <fstream>      // ifstreamクラスが定義されているヘッダファイル
+ #include <filesystem>   // filesystem名前空間が定義されているヘッダファイル
+ 
+ // 図形データ
+ #include "../../Res/MeshData/crystal_mesh.h"
++#include "../../Res/MeshData/wall_mesh.h"
+ 
+ /// <summary>
+ /// OpenGLからのメッセージを処理するコールバック関数
+ /// </summary>
+ /// <param name="source">メッセージの発信者(OpenGL,Windows,シェーダなど)</param>
+ /// <param name="type">メッセージの種類(エラー,警告など)</param>
+ /// <param name="id">メッセージを一位に識別する値</param>
+ /// <param name="severity">メッセージの重要度(高,中,低,最低)</param>
+ /// <param name="length">メッセージの文字数. 負数ならメッセージは0終端されている</param>
+ /// <param name="message">メッセージ本体</param>
+ /// <param name="userParam">コールバック設定時に指定したポインタ</param>
+ void APIENTRY DebugCallback
+ (
+```
+```diff
+     const void* indexData;  // インデックスデータのアドレス
+ };
+ const MeshData meshes[] =
+ {
+   { sizeof(vertexData), sizeof(indexData), vertexData, indexData },
+   { sizeof(crystal_vertices), sizeof(crystal_indices),crystal_vertices, crystal_indices },
++  { sizeof(wall_vertices), sizeof(wall_indices),wall_vertices, wall_indices },
+ };
+ // 図形データから描画パラメータを作成し、データをGPUメモリにコピーする
+ drawParamsList.reserve(std::size(meshes));
+```
+
+`MainGameScene.cpp`
+```diff
+ // 壁を作成
+ auto texWall = std::make_shared<Texture>("Res/wall.tga");
+ auto texCrystalBlue = std::make_shared<Texture>("Res/MeshData/crystal_blue.tga");
+ for (int y = 0; y < mapSizeY; ++y)
+ {
+     for (int x = 0; x < mapSizeX; ++x)
+     {
+         const float posX = static_cast<float>(x + 0.5) * squareSize;
+         const float posZ = static_cast<float>(y + 0.5) * squareSize;
+         if (GetMapData(x, y) == '#')
+         {
+             auto wall = engine.Create<GameObject>(
++                "wall", { posX, 0, posZ });
+             wall->scale = { squareScale, squareScale, squareScale };
+             wall->texColor = texWall;
+             wall->meshId = 2;
+         }
+         else if (GetMapData(x, y) == 'C')
+         {
+```
